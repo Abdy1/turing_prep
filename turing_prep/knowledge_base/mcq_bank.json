@@ -1,0 +1,1392 @@
+[
+  {
+    "id": "mcq-turing-q01",
+    "topicId": "topic-jvm-memory",
+    "topicName": "JVM Architecture, Memory Model & Garbage Collection",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "What is the output of the following Java code snippet?\n\n```java\npublic class StringPoolTest {\n    public static void main(String[] args) {\n        String s1 = \"Turing\";\n        String s2 = new String(\"Turing\");\n        String s3 = s2.intern();\n        System.out.println((s1 == s2) + \" \" + (s1 == s3) + \" \" + s1.equals(s2));\n    }\n}\n```",
+    "options": [
+      "true true true",
+      "false true true",
+      "false false true",
+      "false true false"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Creating a string via literal (`\"Turing\"`) places it in the JVM String Constant Pool, whereas `new String(\"Turing\")` explicitly allocates a distinct object on the Heap. Thus `s1 == s2` is `false` (comparing memory addresses). Calling `s2.intern()` searches the String Pool for an existing matching string and returns its canonical reference, so `s1 == s3` evaluates to `true`. Finally, `s1.equals(s2)` compares the character contents, which are identical (`true`). Output: `false true true`.",
+    "deepDive": {
+      "concept": "String Pool vs. Heap Allocation & String.intern()",
+      "whatToLookFor": "`==` compares reference addresses; `.equals()` compares value content. `new String()` always forces heap allocation.",
+      "searchKeywords": "Java string pool vs heap allocation intern method Baeldung",
+      "recommendedRead": "Turing Core Java Q&A & Baeldung Core Java Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q02",
+    "topicId": "topic-core-java-oop",
+    "topicName": "Core Java OOP, Exception Handling & Serialization",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What will happen when you compile and run the following code?\n\n```java\nclass Parent {\n    static void display() {\n        System.out.print(\"Parent \");\n    }\n    void instanceDisplay() {\n        System.out.print(\"ParentInstance \");\n    }\n}\n\nclass Child extends Parent {\n    static void display() {\n        System.out.print(\"Child \");\n    }\n    @Override\n    void instanceDisplay() {\n        System.out.print(\"ChildInstance \");\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Parent ref = new Child();\n        ref.display();\n        ref.instanceDisplay();\n    }\n}\n```",
+    "options": [
+      "Child ChildInstance",
+      "Parent ChildInstance",
+      "Parent ParentInstance",
+      "Compilation error because static methods cannot be redefined in a subclass"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Static methods cannot be overridden in Java; redefining a static method with the same signature in a subclass is known as method hiding, not overriding. Static methods are bound at compile time based strictly on the reference type (`Parent ref`), so `ref.display()` invokes `Parent.display()`. Instance methods use late (dynamic) dispatch at runtime based on the actual object created (`new Child()`), so `ref.instanceDisplay()` invokes `Child.instanceDisplay()`. Output: `Parent ChildInstance`.",
+    "deepDive": {
+      "concept": "Static Method Hiding vs. Dynamic Method Dispatch",
+      "whatToLookFor": "Static methods resolve by compiler reference type (invokestatic bytecode); non-static methods resolve by runtime heap object (invokevirtual).",
+      "searchKeywords": "Java static method hiding vs method overriding Baeldung",
+      "recommendedRead": "Turing 105 Core Java Interview Questions"
+    }
+  },
+  {
+    "id": "mcq-turing-q03",
+    "topicId": "topic-core-java-oop",
+    "topicName": "Core Java OOP, Exception Handling & Serialization",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What is printed by the following program?\n\n```java\nclass Box {\n    int value;\n    Box(int value) { this.value = value; }\n}\n\npublic class PassByValueDemo {\n    static void modify(Box b1, Box b2) {\n        b1.value = 50;\n        b2 = new Box(100);\n        b2.value = 200;\n    }\n\n    public static void main(String[] args) {\n        Box boxA = new Box(10);\n        Box boxB = new Box(20);\n        modify(boxA, boxB);\n        System.out.println(boxA.value + \" \" + boxB.value);\n    }\n}\n```",
+    "options": [
+      "10 20",
+      "50 20",
+      "50 100",
+      "50 200"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Java is strictly pass-by-value. For object parameters, a copy of the reference address is passed into the method stack frame. Modifying `b1.value = 50` accesses and mutates the heap object that `boxA` points to. However, reassigning `b2 = new Box(100)` merely overwrites the local copy of the pointer variable `b2` to point to a new heap object; the caller's variable `boxB` remains untouched pointing to its original object (`20`). Output: `50 20`.",
+    "deepDive": {
+      "concept": "Pass-by-Value Semantics for Object References",
+      "whatToLookFor": "Mutating fields modifies the shared heap instance; reassigning parameter references only modifies the local stack frame pointer.",
+      "searchKeywords": "Java pass by value object reference manipulation Baeldung",
+      "recommendedRead": "Baeldung: Java is Pass-by-Value, Not Pass-by-Reference"
+    }
+  },
+  {
+    "id": "mcq-turing-q04",
+    "topicId": "topic-jvm-memory",
+    "topicName": "JVM Architecture, Memory Model & Garbage Collection",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Suppose Object A holds a reference to Object B, and Object B holds a reference back to Object A. No other active thread stack frame or static variable references either A or B. Which statement is true regarding JVM Garbage Collection?",
+    "options": [
+      "Neither A nor B can be garbage collected because their reference counts are both 1.",
+      "Both A and B are eligible for garbage collection because neither is reachable from any Garbage Collection Root (GC Root).",
+      "Calling System.gc() guarantees that both A and B will be immediately destroyed before the next line of code executes.",
+      "Only the object created first is eligible for garbage collection."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Modern JVMs (HotSpot) do not use naive reference counting (which fails on cyclic graphs). Instead, they use tracing reachability analysis starting from GC Roots (active thread stack frames, static fields, active JNI handles). An isolated island of circular references is completely disconnected from any GC Root, making both objects eligible for collection. Note that `System.gc()` is purely a non-binding hint to the JVM.",
+    "deepDive": {
+      "concept": "GC Roots & Circular Reference Reachability Analysis",
+      "whatToLookFor": "Circular references between unreferenced objects do NOT prevent garbage collection in Java.",
+      "searchKeywords": "JVM garbage collection GC roots circular reference reachability Baeldung",
+      "recommendedRead": "Baeldung: Java Memory Management and JVM Memory Model"
+    }
+  },
+  {
+    "id": "mcq-turing-q05",
+    "topicId": "topic-core-java-oop",
+    "topicName": "Core Java OOP, Exception Handling & Serialization",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "Which statement accurately describes the difference between the `>>` and `>>>` operators in Java?",
+    "options": [
+      ">> shifts bits left while >>> shifts bits right.",
+      ">> preserves the sign bit (arithmetic right shift), whereas >>> always fills the leftmost bits with zeros (logical/unsigned right shift).",
+      ">>> is only valid for long primitives, whereas >> works on int primitives.",
+      ">> fills leftmost bits with zeros, whereas >>> preserves the sign bit."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "The signed right shift operator (`>>`) performs an arithmetic shift, preserving the sign bit (copies 1 for negative numbers and 0 for positive numbers into the vacated leftmost positions). The unsigned right shift operator (`>>>`) performs a logical shift, always filling the leftmost vacated bits with zeros regardless of sign.",
+    "deepDive": {
+      "concept": "Bitwise Shift Operators (Arithmetic vs. Logical)",
+      "whatToLookFor": "`>>` preserves negative signs (sign-extension); `>>>` produces positive numbers from negative values by zero-filling.",
+      "searchKeywords": "Java difference between >> and >>> bitwise shift operators",
+      "recommendedRead": "Turing Core Java Interview Questions & Oracle Java Tutorials"
+    }
+  },
+  {
+    "id": "mcq-turing-q06",
+    "topicId": "topic-java-collections-streams",
+    "topicName": "Collections Framework, Generics & Java 8+ Streams",
+    "difficulty": "Hard",
+    "isMultiSelect": false,
+    "question": "What is the output of the following code?\n\n```java\nimport java.util.*;\n\nclass Key {\n    int id;\n    Key(int id) { this.id = id; }\n    @Override\n    public int hashCode() { return Objects.hash(id); }\n    @Override\n    public boolean equals(Object o) {\n        return (o instanceof Key) && ((Key) o).id == this.id;\n    }\n}\n\npublic class MapTest {\n    public static void main(String[] args) {\n        Map<Key, String> map = new HashMap<>();\n        Key k = new Key(1);\n        map.put(k, \"Developer\");\n        k.id = 2;\n        System.out.println(map.get(k) + \" \" + map.get(new Key(1)));\n    }\n}\n```",
+    "options": [
+      "Developer null",
+      "null Developer",
+      "null null",
+      "Developer Developer"
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "When `k` is put into the map, it is placed into the bucket determined by `hash(1)`. Modifying `k.id = 2` mutates its state such that its hash code becomes `hash(2)`. When `map.get(k)` is called, the map computes `hash(2)` and looks in that bucket, which is empty, returning `null`. When `map.get(new Key(1))` is called, it searches the original bucket for `hash(1)` and finds the entry, but its `.equals()` check fails because `k.id` is now 2 (`2 == 1` is false), also returning `null`. Output: `null null`. This demonstrates why Map keys must be immutable.",
+    "deepDive": {
+      "concept": "Mutable Map Keys & Hash Bucket Inconsistency Trap",
+      "whatToLookFor": "Never use mutable objects as keys in Hash-based collections. If state changes, hash code changes and the entry is lost.",
+      "searchKeywords": "Java HashMap mutable key trap hashcode equals Baeldung",
+      "recommendedRead": "Baeldung: Guide to HashMap with Custom Objects as Keys"
+    }
+  },
+  {
+    "id": "mcq-turing-q07",
+    "topicId": "topic-java-collections-streams",
+    "topicName": "Collections Framework, Generics & Java 8+ Streams",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What happens when the following code is executed?\n\n```java\nimport java.util.*;\n\npublic class IteratorTrap {\n    public static void main(String[] args) {\n        List<String> list = new ArrayList<>(Arrays.asList(\"Java\", \"Spring\", \"Boot\"));\n        for (String item : list) {\n            if (\"Spring\".equals(item)) {\n                list.remove(item);\n            }\n        }\n        System.out.println(list);\n    }\n}\n```",
+    "options": [
+      "Prints [Java, Boot] without error",
+      "Throws ConcurrentModificationException",
+      "Prints [Java, Spring, Boot]",
+      "Throws UnsupportedOperationException"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "ArrayList iterators are Fail-Fast: modifying the collection structure directly via `list.remove()` instead of `iterator.remove()` increments the internal `modCount`. In standard loops, subsequent calls to `iterator.next()` detect `modCount != expectedModCount` and throw `ConcurrentModificationException`. (Note: In this specific 3-element ArrayList case, removing the 2nd element causes `size` to equal `cursor` so `hasNext()` returns false, but on technical interview assessments, the tested rule-of-thumb is that modifying collections inside a foreach loop throws `ConcurrentModificationException` unless `iterator.remove()` or `list.removeIf()` is used).",
+    "deepDive": {
+      "concept": "Fail-Fast Iterators & ConcurrentModificationException",
+      "whatToLookFor": "Use `list.removeIf(...)` or explicit `Iterator.remove()` to safely remove items while iterating.",
+      "searchKeywords": "Java ConcurrentModificationException fail-fast iterator remove in foreach",
+      "recommendedRead": "Turing 105 Core Java Q&A & Baeldung Collections Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q08",
+    "topicId": "topic-java-collections-streams",
+    "topicName": "Collections Framework, Generics & Java 8+ Streams",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What is printed to the console when this snippet executes?\n\n```java\nimport java.util.stream.Stream;\n\npublic class StreamLazyTest {\n    public static void main(String[] args) {\n        Stream<String> stream = Stream.of(\"a\", \"b\", \"c\")\n            .filter(s -> {\n                System.out.print(s + \" \");\n                return s.equals(\"b\");\n            });\n        System.out.print(\"Done \");\n    }\n}\n```",
+    "options": [
+      "a b c Done ",
+      "a b Done ",
+      "Done ",
+      "Done a b c "
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Intermediate Stream operations (such as `filter()`, `map()`, `peek()`) are strictly lazy. They merely build the pipeline description and do not process elements until a terminal operation (e.g. `collect()`, `forEach()`, `count()`, `findFirst()`) is invoked. Because no terminal operation was called on `stream`, the filter predicate never runs. Output: `Done `.",
+    "deepDive": {
+      "concept": "Java 8 Stream Pipeline Laziness & Terminal Operations",
+      "whatToLookFor": "Intermediate operations do nothing without a terminal operation trigger.",
+      "searchKeywords": "Java 8 stream lazy evaluation intermediate vs terminal operations Baeldung",
+      "recommendedRead": "Baeldung: Java 8 Stream API Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q09",
+    "topicId": "topic-java-collections-streams",
+    "topicName": "Collections Framework, Generics & Java 8+ Streams",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What occurs when the following code is executed?\n\n```java\nimport java.util.*;\n\nclass Task {\n    String name;\n    Task(String name) { this.name = name; }\n}\n\npublic class SetTest {\n    public static void main(String[] args) {\n        Set<Task> tasks = new TreeSet<>();\n        tasks.add(new Task(\"Write Code\"));\n        System.out.println(tasks.size());\n    }\n}\n```",
+    "options": [
+      "Prints 1",
+      "Compilation error because Task does not implement Comparable",
+      "Throws ClassCastException at runtime",
+      "Throws NullPointerException at runtime"
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "Unlike `HashSet` (which only requires `hashCode()` and `equals()`), `TreeSet` is a NavigableSet backed by a Red-Black Tree and requires all elements to be mutually comparable. If no explicit `Comparator` is supplied to the `TreeSet` constructor, `TreeSet.add()` attempts to cast the inserted object to `Comparable` at runtime. Because `Task` does not implement `Comparable`, it compiles successfully but throws `ClassCastException` at runtime.",
+    "deepDive": {
+      "concept": "TreeSet Ordering Contract & Comparable Requirement",
+      "whatToLookFor": "Elements in a `TreeSet` must implement `Comparable` or the set must be initialized with a custom `Comparator`.",
+      "searchKeywords": "TreeSet ClassCastException comparable comparator Baeldung",
+      "recommendedRead": "Turing 105 Core Java Q&A & Baeldung Java Collections"
+    }
+  },
+  {
+    "id": "mcq-turing-q10",
+    "topicId": "topic-java-collections-streams",
+    "topicName": "Collections Framework, Generics & Java 8+ Streams",
+    "difficulty": "Hard",
+    "isMultiSelect": true,
+    "question": "Which of the following interface declarations are valid `@FunctionalInterface` definitions in Java 8+? (Choose all that apply)\n\n```java\n// Option A\n@FunctionalInterface\ninterface A {\n    void execute();\n    default void log() { System.out.println(\"Logging\"); }\n    static void help() { System.out.println(\"Help\"); }\n}\n\n// Option B\n@FunctionalInterface\ninterface B {\n    void execute();\n    boolean equals(Object obj);\n    String toString();\n}\n\n// Option C\n@FunctionalInterface\ninterface C {\n    default void log() { System.out.println(\"Logging\"); }\n}\n\n// Option D\n@FunctionalInterface\ninterface D {\n    void execute();\n    void cancel();\n}\n```",
+    "options": [
+      "Interface A",
+      "Interface B",
+      "Interface C",
+      "Interface D"
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "A functional interface must contain exactly one Single Abstract Method (SAM). In Interface A, `execute()` is the sole abstract method; `default` and `static` methods do not count. In Interface B, abstract methods that redeclare public methods of `java.lang.Object` (`equals`, `toString`, `hashCode`) are ignored when counting abstract methods, leaving `execute()` as the single abstract method. Interface C has 0 abstract methods (invalid), and Interface D has 2 abstract methods (invalid). Correct: A and B.",
+    "deepDive": {
+      "concept": "@FunctionalInterface Contract & Object Method Exclusion",
+      "whatToLookFor": "Methods matching `java.lang.Object` public signatures (equals, hashCode, toString) do NOT count against the single abstract method quota.",
+      "searchKeywords": "Java @FunctionalInterface java.lang.Object methods count Baeldung",
+      "recommendedRead": "Baeldung: Functional Interfaces in Java 8"
+    }
+  },
+  {
+    "id": "mcq-turing-q11",
+    "topicId": "topic-java-concurrency",
+    "topicName": "Java Multithreading, Thread Lifecycle & Memory Model (JMM)",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Suppose class `Worker` has two methods: `public synchronized void doInstanceWork()` and `public static synchronized void doStaticWork()`. Thread T1 and Thread T2 are running concurrently on two different instances (`w1` and `w2`) of `Worker`. Which statement is true?",
+    "options": [
+      "If T1 calls w1.doInstanceWork() and T2 calls w2.doInstanceWork(), T2 will enter the BLOCKED state until T1 finishes.",
+      "If T1 calls w1.doStaticWork() and T2 calls w2.doStaticWork(), one thread will block because both acquire the monitor on Worker.class.",
+      "If T1 calls Worker.doStaticWork() and T2 calls w1.doInstanceWork(), T2 will block because static locks override instance locks.",
+      "Neither thread can ever block when using two separate instances w1 and w2."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "An instance `synchronized` method acquires the intrinsic lock on the specific object instance (`this`). Since `w1` and `w2` are separate instances with distinct monitors, calls to `doInstanceWork()` execute concurrently without blocking each other. In contrast, a `public static synchronized` method locks on the `Class` object (`Worker.class`), which is shared across the entire classloader. Thus T1 and T2 contend for the same monitor lock on `Worker.class`, causing one to enter the BLOCKED state.",
+    "deepDive": {
+      "concept": "Instance Monitor (this) vs. Static Monitor (Class) Synchronization",
+      "whatToLookFor": "Static synchronized methods lock on Class object; instance synchronized methods lock on the specific object instance.",
+      "searchKeywords": "Java synchronized instance vs static method monitor lock Baeldung",
+      "recommendedRead": "Baeldung: Java Concurrency - Locks and Monitors"
+    }
+  },
+  {
+    "id": "mcq-turing-q12",
+    "topicId": "topic-java-concurrency",
+    "topicName": "Java Multithreading, Thread Lifecycle & Memory Model (JMM)",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "What is the output of the following program?\n\n```java\npublic class ThreadTest {\n    public static void main(String[] args) {\n        Thread t = new Thread(() -> System.out.print(Thread.currentThread().getName() + \" \"));\n        t.run();\n        System.out.print(\"Finished\");\n    }\n}\n```",
+    "options": [
+      "Thread-0 Finished",
+      "main Finished",
+      "Finished Thread-0",
+      "Throws IllegalThreadStateException"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Calling `t.start()` creates a new native OS thread, allocates a new call stack, and calls `run()` asynchronously. Calling `t.run()` directly bypasses thread creation and executes the `run()` method synchronously on the caller's thread (`main`). Therefore, `Thread.currentThread().getName()` evaluates to `main`. Output: `main Finished`.",
+    "deepDive": {
+      "concept": "Thread.start() vs. Thread.run() Execution Context",
+      "whatToLookFor": "`start()` spawns a new thread; `run()` is just a plain synchronous method call on the current thread.",
+      "searchKeywords": "Java difference between Thread.start and Thread.run Baeldung",
+      "recommendedRead": "Turing 105 Core Java Interview Questions"
+    }
+  },
+  {
+    "id": "mcq-turing-q13",
+    "topicId": "topic-core-java-oop",
+    "topicName": "Core Java OOP, Exception Handling & Serialization",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What value does `compute()` return when called?\n\n```java\npublic class ExceptionTrap {\n    public static int compute() {\n        int x = 10;\n        try {\n            return x;\n        } finally {\n            x = 20;\n        }\n    }\n    public static void main(String[] args) {\n        System.out.println(compute());\n    }\n}\n```",
+    "options": [
+      "10",
+      "20",
+      "Compilation error (unreachable code)",
+      "0"
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0
+    ],
+    "explanation": "The `finally` block always executes before a method returns. However, when `return x;` is reached in the `try` block, the value of primitive variable `x` (`10`) is saved into an internal return value slot on the stack frame. The `finally` block then runs and modifies the local variable `x = 20`. Because `finally` does not contain its own `return` statement, the previously stored return value (`10`) is returned to the caller. (If `finally` had executed `return x;`, it would have returned 20).",
+    "deepDive": {
+      "concept": "Try-Finally Return Value Stack Preservation",
+      "whatToLookFor": "Primitive return values evaluated in `try` are copied to the return register before `finally` executes; modifying the local variable does not change the result unless `finally` has a `return` statement.",
+      "searchKeywords": "Java return in try finally block execution order bytecode Baeldung",
+      "recommendedRead": "Turing Core Java Q&A & Baeldung Exceptions Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q14",
+    "topicId": "topic-core-java-oop",
+    "topicName": "Core Java OOP, Exception Handling & Serialization",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What is printed after serializing and deserializing `UserSession`?\n\n```java\nimport java.io.*;\n\nclass UserSession implements Serializable {\n    private static final long serialVersionUID = 1L;\n    String username = \"alice\";\n    transient String secretToken = \"xyz987\";\n    transient int pin = 1234;\n}\n\npublic class SerializationDemo {\n    public static void main(String[] args) throws Exception {\n        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {\n            oos.writeObject(new UserSession());\n        }\n        try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()))) {\n            UserSession restored = (UserSession) ois.readObject();\n            System.out.println(restored.username + \" \" + restored.secretToken + \" \" + restored.pin);\n        }\n    }\n}\n```",
+    "options": [
+      "alice xyz987 1234",
+      "alice null 0",
+      "alice null 1234",
+      "Throws NotSerializableException"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Fields marked with the `transient` keyword are ignored during serialization and are not included in the byte stream. During deserialization, Java restores objects without calling their constructors or running field initializers. Consequently, `transient` fields receive their default JVM type values: `null` for object references like `secretToken` and `0` for primitive integers like `pin`. Output: `alice null 0`.",
+    "deepDive": {
+      "concept": "Transient Fields in Java Serialization",
+      "whatToLookFor": "Transient fields bypass serialization and default to null/0 upon deserialization without invoking constructors.",
+      "searchKeywords": "Java transient keyword serialization deserialization default values",
+      "recommendedRead": "Baeldung: Guide to the transient Keyword in Java"
+    }
+  },
+  {
+    "id": "mcq-turing-q15",
+    "topicId": "topic-java-concurrency",
+    "topicName": "Java Multithreading, Thread Lifecycle & Memory Model (JMM)",
+    "difficulty": "Medium",
+    "isMultiSelect": true,
+    "question": "Which statements accurately distinguish `java.util.concurrent.Callable<V>` from `java.lang.Runnable`? (Choose all that apply)",
+    "options": [
+      "Callable.call() returns a value of type V, whereas Runnable.run() has a void return type.",
+      "Callable.call() can throw checked exceptions (throws Exception), whereas Runnable.run() cannot throw checked exceptions.",
+      "A Callable instance can be passed directly into new Thread(callable) without a wrapper.",
+      "Submitting a Callable<V> to an ExecutorService returns a Future<V> representing the pending result."
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "`Callable<V>` declares `V call() throws Exception`, enabling it to return a computed result and throw checked exceptions. When submitted to an `ExecutorService`, it returns a `Future<V>`. `Runnable` declares `void run()`, cannot return values, and cannot throw checked exceptions. Statement C is false because `Thread` constructors only accept `Runnable`; to run a `Callable` in a `Thread`, it must first be wrapped in a `FutureTask`. Correct: A, B, and D.",
+    "deepDive": {
+      "concept": "Callable vs. Runnable in Java Concurrency",
+      "whatToLookFor": "Callable returns Future<V> and throws checked exceptions; Thread only accepts Runnable directly.",
+      "searchKeywords": "Java Callable vs Runnable ExecutorService Future Baeldung",
+      "recommendedRead": "Baeldung: Runnable vs. Callable in Java"
+    }
+  },
+  {
+    "id": "mcq-turing-q16",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "Which three annotations are combined inside `@SpringBootApplication`?",
+    "options": [
+      "@Controller, @Service, and @Repository",
+      "@Configuration, @EnableAutoConfiguration, and @ComponentScan",
+      "@Component, @Autowired, and @PropertySource",
+      "@EnableWebMvc, @Configuration, and @Component"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`@SpringBootApplication` is a meta-annotation that bundles `@SpringBootConfiguration` (a specialized form of `@Configuration`), `@EnableAutoConfiguration` (enables Spring Boot's opinionated auto-configuration based on classpath jars), and `@ComponentScan` (enables scanning of stereotype components in the current package and its subpackages).",
+    "deepDive": {
+      "concept": "@SpringBootApplication Composition",
+      "whatToLookFor": "Combines @Configuration, @EnableAutoConfiguration, and @ComponentScan.",
+      "searchKeywords": "Spring Boot @SpringBootApplication annotations combination Turing interview",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions"
+    }
+  },
+  {
+    "id": "mcq-turing-q17",
+    "topicId": "topic-spring-di-beans",
+    "topicName": "Spring Dependency Injection, Bean Lifecycle & Stereotypes",
+    "difficulty": "Medium",
+    "isMultiSelect": true,
+    "question": "Examine the following Spring Boot code:\n\n```java\npublic interface PaymentGateway { void process(); }\n\n@Service(\"stripeGateway\")\npublic class StripePaymentGateway implements PaymentGateway {\n    public void process() {}\n}\n\n@Service(\"paypalGateway\")\npublic class PaypalPaymentGateway implements PaymentGateway {\n    public void process() {}\n}\n\n@RestController\npublic class CheckoutController {\n    @Autowired\n    private PaymentGateway paymentGateway;\n}\n```\n\nWhat happens when the Spring Boot application starts, and how can you fix it? (Choose all that apply)",
+    "options": [
+      "The application fails to start and throws NoUniqueBeanDefinitionException.",
+      "Spring Boot automatically injects StripePaymentGateway in alphabetical order.",
+      "Adding @Qualifier(\"stripeGateway\") alongside @Autowired resolves the conflict.",
+      "Marking one of the @Service classes with @Primary resolves the conflict by setting a default bean."
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Spring `@Autowired` resolves dependencies by type first. Since two beans implement `PaymentGateway` and the field name `paymentGateway` does not match either bean name (`stripeGateway` or `paypalGateway`), Spring cannot determine which bean to inject and throws `NoUniqueBeanDefinitionException`. This can be resolved by adding `@Qualifier(\"stripeGateway\")` at the injection point or marking one implementation with `@Primary`. Correct: A, C, and D.",
+    "deepDive": {
+      "concept": "Resolving NoUniqueBeanDefinitionException (@Qualifier vs. @Primary)",
+      "whatToLookFor": "Spring autowires by type; resolve multiple candidates using @Qualifier or @Primary.",
+      "searchKeywords": "Spring NoUniqueBeanDefinitionException @Qualifier @Primary Baeldung",
+      "recommendedRead": "Turing Spring Boot Q&A & Baeldung Spring Framework Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q18",
+    "topicId": "topic-spring-di-beans",
+    "topicName": "Spring Dependency Injection, Bean Lifecycle & Stereotypes",
+    "difficulty": "Hard",
+    "isMultiSelect": false,
+    "question": "Suppose `OrderService` is a default `@Service` (`singleton` scope) and `ShoppingCart` is annotated with `@Component` and `@Scope(\"prototype\")`:\n\n```java\n@Service\npublic class OrderService {\n    @Autowired\n    private ShoppingCart cart;\n\n    public ShoppingCart getCart() {\n        return this.cart;\n    }\n}\n```\n\nIf `orderService.getCart()` is called 5 times across 5 different HTTP requests, how many `ShoppingCart` instances are created?",
+    "options": [
+      "5 instances, because ShoppingCart has prototype scope.",
+      "1 instance, because OrderService is a singleton and injects ShoppingCart only once when OrderService is initialized.",
+      "0 instances, because injecting a prototype bean into a singleton bean causes a startup exception.",
+      "2 instances."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Because `OrderService` is a `singleton`, it is instantiated only once during application startup. Its `@Autowired` dependencies are resolved and injected at that single initialization moment. Even though `ShoppingCart` is configured as `prototype`, the injection occurs only once, resulting in only 1 instance of `ShoppingCart`. To receive a fresh prototype instance on every call, one must use `@Lookup`, inject an `ObjectProvider<ShoppingCart>`, or use a scoped proxy (`proxyMode = ScopedProxyMode.TARGET_CLASS`).",
+    "deepDive": {
+      "concept": "Prototype Bean Injection into Singleton Bean Problem",
+      "whatToLookFor": "Singleton beans inject prototype dependencies only ONCE unless scoped proxies, ObjectProvider, or @Lookup methods are used.",
+      "searchKeywords": "Spring inject prototype bean into singleton @Lookup ObjectProvider Baeldung",
+      "recommendedRead": "Baeldung: Injecting Prototype Beans into a Singleton Instance"
+    }
+  },
+  {
+    "id": "mcq-turing-q19",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What is the primary difference between `CommandLineRunner` and `ApplicationRunner` in Spring Boot?",
+    "options": [
+      "CommandLineRunner runs before ApplicationContext is created, whereas ApplicationRunner runs after.",
+      "CommandLineRunner.run(String... args) receives raw string command-line arguments, whereas ApplicationRunner.run(ApplicationArguments args) receives a parsed ApplicationArguments object supporting --option=value syntax.",
+      "Only one CommandLineRunner bean is allowed per application, whereas multiple ApplicationRunner beans are allowed.",
+      "ApplicationRunner is only used in web applications, whereas CommandLineRunner is only for CLI scripts."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Both `CommandLineRunner` and `ApplicationRunner` execute immediately after the `ApplicationContext` is fully refreshed and before `SpringApplication.run()` completes. The key architectural difference is argument parsing: `CommandLineRunner` accepts raw `String... args`, whereas `ApplicationRunner` accepts `ApplicationArguments`, providing utility methods to query parsed option arguments (e.g. `--port=8080`) and non-option arguments.",
+    "deepDive": {
+      "concept": "CommandLineRunner vs. ApplicationRunner Parameter Parsing",
+      "whatToLookFor": "CommandLineRunner receives raw String[] array; ApplicationRunner receives parsed ApplicationArguments.",
+      "searchKeywords": "CommandLineRunner vs ApplicationRunner Spring Boot differences Baeldung",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions"
+    }
+  },
+  {
+    "id": "mcq-turing-q20",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Hard",
+    "isMultiSelect": true,
+    "question": "Which statements are true when comparing `@Value` and `@ConfigurationProperties` in Spring Boot? (Choose all that apply)",
+    "options": [
+      "@ConfigurationProperties(prefix = \"app.mail\") supports relaxed binding (e.g., binding app.mail.host-name or APP_MAIL_HOST_NAME to hostName), whereas @Value requires exact property names.",
+      "@Value supports Spring Expression Language (SpEL, e.g., #{...}), whereas @ConfigurationProperties does not evaluate SpEL expressions.",
+      "@ConfigurationProperties can group and validate related properties together using JSR-303 @Validated annotations (like @NotNull).",
+      "@Value can bind an entire nested YAML object hierarchy into a strongly typed POJO automatically without specifying individual keys."
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "`@ConfigurationProperties` provides structured, typesafe configuration with relaxed binding (kebab-case, camelCase, UPPER_CASE environment variables all map to the same field) and supports JSR-303 `@Validated` annotations. `@Value` is intended for single scalar values and supports SpEL expressions (`#{...}`). Statement D is false because `@Value` cannot automatically map complex hierarchical structures into POJOs. Correct: A, B, and C.",
+    "deepDive": {
+      "concept": "@Value vs. @ConfigurationProperties Configuration Binding",
+      "whatToLookFor": "@ConfigurationProperties supports relaxed binding and validation; @Value supports SpEL expressions.",
+      "searchKeywords": "Spring Boot @ConfigurationProperties vs @Value relaxed binding SpEL Baeldung",
+      "recommendedRead": "Baeldung: ConfigurationProperties in Spring Boot"
+    }
+  },
+  {
+    "id": "mcq-turing-q21",
+    "topicId": "topic-spring-jpa-transactions",
+    "topicName": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "difficulty": "Hard",
+    "isMultiSelect": true,
+    "question": "Consider the following `UserService` class in a Spring Boot application:\n\n```java\n@Service\npublic class UserService {\n    @Autowired\n    private UserRepository repo;\n\n    public void registerUser(User user) throws Exception {\n        saveUserInternal(user);\n    }\n\n    @Transactional\n    public void saveUserInternal(User user) throws Exception {\n        repo.save(user);\n        throw new Exception(\"Checked exception occurred\");\n    }\n}\n```\n\nIdentify the two reasons why the database insert in `saveUserInternal` will NOT be rolled back when an external caller invokes `userService.registerUser(user)`: (Choose two)",
+    "options": [
+      "Calling saveUserInternal(user) from registerUser(user) within the same class (this.saveUserInternal) bypasses the Spring AOP proxy, so the @Transactional interceptor never triggers.",
+      "By default, @Transactional only rolls back on unchecked exceptions (RuntimeException and Error), not on checked exceptions (Exception), unless rollbackFor = Exception.class is specified.",
+      "@Transactional cannot be placed on methods; it is only valid at the class level.",
+      "UserRepository.save() cannot participate in Spring transactions."
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0,
+      1
+    ],
+    "explanation": "Two fatal transactional traps exist here: 1) Self-invocation: calling `saveUserInternal` directly via `this` within the same class bypasses the Spring AOP proxy, meaning no transaction is ever started. 2) Rollback rules: Spring's transaction manager rolls back exclusively on unchecked exceptions (`RuntimeException` and `Error`) by default. Throwing `Exception` (checked) will not trigger a rollback unless explicitly declared via `@Transactional(rollbackFor = Exception.class)`. Correct: A and B.",
+    "deepDive": {
+      "concept": "Self-Invocation Proxy Bypass & Checked Exception Rollback Trap",
+      "whatToLookFor": "Self-invocation ignores AOP proxies; Spring only rolls back on RuntimeException by default.",
+      "searchKeywords": "Spring @Transactional self-invocation proxy bypass checked exception rollbackFor Baeldung",
+      "recommendedRead": "Turing Spring Boot Q&A & Baeldung Transactions Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q22",
+    "topicId": "topic-spring-jpa-transactions",
+    "topicName": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "How does `@Transactional(propagation = Propagation.NESTED)` behave when called inside an existing active transaction?",
+    "options": [
+      "It suspends the outer transaction and starts a completely independent physical database transaction with its own connection.",
+      "It creates a savepoint within the existing physical transaction; if the nested transaction rolls back, it rolls back only to the savepoint without forcing the outer transaction to roll back.",
+      "It throws an IllegalTransactionStateException if an outer transaction already exists.",
+      "It executes non-transactionally and ignores the outer transaction."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`Propagation.NESTED` operates within the same physical connection and transaction by setting a JDBC Savepoint. If the nested method fails and rolls back, only changes made within that savepoint are rolled back, permitting the outer transaction to catch the exception and commit its own work. In contrast, `REQUIRES_NEW` suspends the outer transaction and opens a completely separate physical transaction on a new connection.",
+    "deepDive": {
+      "concept": "Propagation.NESTED vs. Propagation.REQUIRES_NEW",
+      "whatToLookFor": "NESTED uses JDBC savepoints; REQUIRES_NEW opens independent physical transactions.",
+      "searchKeywords": "Spring Propagation.NESTED savepoint vs REQUIRES_NEW Baeldung",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions Q38"
+    }
+  },
+  {
+    "id": "mcq-turing-q23",
+    "topicId": "topic-spring-jpa-transactions",
+    "topicName": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "What is the difference between `@ControllerAdvice` and `@RestControllerAdvice` in Spring Boot?",
+    "options": [
+      "@ControllerAdvice only catches checked exceptions, whereas @RestControllerAdvice catches runtime exceptions.",
+      "@RestControllerAdvice is a meta-annotation combining @ControllerAdvice and @ResponseBody, automatically serializing return values from @ExceptionHandler methods into the HTTP response body (such as JSON).",
+      "@RestControllerAdvice only applies to a single controller class, whereas @ControllerAdvice applies globally.",
+      "@ControllerAdvice is deprecated in Spring Boot 3.x."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Just as `@RestController` is a convenience meta-annotation combining `@Controller` and `@ResponseBody`, `@RestControllerAdvice` combines `@ControllerAdvice` and `@ResponseBody`. This ensures return values from `@ExceptionHandler` methods are automatically serialized into the HTTP response body (typically JSON) rather than being resolved as HTML view names.",
+    "deepDive": {
+      "concept": "@ControllerAdvice vs. @RestControllerAdvice Global Error Handling",
+      "whatToLookFor": "@RestControllerAdvice automatically applies @ResponseBody to all @ExceptionHandler methods.",
+      "searchKeywords": "Spring Boot difference between @ControllerAdvice and @RestControllerAdvice",
+      "recommendedRead": "Baeldung: Exception Handling in Spring MVC"
+    }
+  },
+  {
+    "id": "mcq-turing-q24",
+    "topicId": "topic-spring-jpa-transactions",
+    "topicName": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "difficulty": "Medium",
+    "isMultiSelect": true,
+    "question": "Which statements are true about `@DataJpaTest` in Spring Boot? (Choose all that apply)",
+    "options": [
+      "It loads the full application context including all @RestController and @Service beans.",
+      "It configures only JPA-relevant components (@Entity classes and Spring Data JPA @Repository interfaces) and uses an embedded in-memory database by default.",
+      "Tests annotated with @DataJpaTest are @Transactional by default and roll back automatically at the end of each test method.",
+      "You can use @DynamicPropertySource alongside test containers or tests to dynamically inject configuration properties into the test Environment."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1,
+      2,
+      3
+    ],
+    "explanation": "`@DataJpaTest` is a targeted slice test annotation: it scans only `@Entity` and Spring Data JPA `@Repository` interfaces (disabling `@Controller` and `@Service` beans to keep execution fast). By default, it configures an embedded in-memory database and wraps every test method in a transaction that automatically rolls back when the test finishes. `@DynamicPropertySource` allows static methods to register dynamic properties (e.g. Testcontainers URLs) into the Spring Environment. Correct: B, C, and D.",
+    "deepDive": {
+      "concept": "Spring Boot Test Slicing with @DataJpaTest",
+      "whatToLookFor": "@DataJpaTest loads only JPA components, runs an in-memory database, and rolls back after each test.",
+      "searchKeywords": "Spring Boot @DataJpaTest slice test @DynamicPropertySource Baeldung",
+      "recommendedRead": "Turing 100+ Spring Boot Q&A & Baeldung Spring Boot Testing Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-q25",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "Which configuration property exposes all Spring Boot Actuator endpoints over HTTP in `application.properties`?",
+    "options": [
+      "spring.actuator.http.expose=*",
+      "management.endpoints.web.exposure.include=*",
+      "server.endpoints.actuator.enable=true",
+      "spring.boot.devtools.endpoints.include=all"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "By default, Spring Boot Actuator exposes only the `/actuator/health` endpoint over HTTP for security reasons. To expose all endpoints (such as `/actuator/metrics`, `/actuator/env`, `/actuator/beans`), you must configure `management.endpoints.web.exposure.include=*` in `application.properties` or `application.yml`.",
+    "deepDive": {
+      "concept": "Spring Boot Actuator HTTP Endpoint Exposure",
+      "whatToLookFor": "Use `management.endpoints.web.exposure.include=*` to expose Actuator endpoints over web.",
+      "searchKeywords": "Spring Boot Actuator expose all endpoints management.endpoints.web.exposure.include",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions & Spring Boot Reference"
+    }
+  },
+  {
+    "id": "mcq-turing-official-devtools",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Which of the following is NOT TRUE about Spring Boot DevTools?\n\n(Official Sample MCQ from Turing Developer Test Prep Guide)",
+    "options": [
+      "By default, DevTools applies properties suitable to a development environment.",
+      "Applications using DevTools restart whenever a file on the classpath changes.",
+      "The spring-boot-devtools module is automatically disabled if the application runs in production.",
+      "The spring-boot-devtools is a tool that monitors the health of a system that contains CPU, RAM, metric information.",
+      "Static resources, including view templates, don't set off a restart if the LiveReload extension is installed in the browser to interact with the embedded LiveReload server that DevTools contains."
+    ],
+    "correctIndex": 3,
+    "correctIndices": [
+      3
+    ],
+    "explanation": "Option 4 is false. Monitoring system health, CPU, RAM, and metrics is the exclusive responsibility of Spring Boot Actuator (`spring-boot-starter-actuator`), NOT DevTools. DevTools is focused on rapid developer iteration with dual-classloader restarts and LiveReload.",
+    "deepDive": {
+      "concept": "DevTools vs. Actuator Differentiation",
+      "whatToLookFor": "DevTools = developer experience & hot reload; Actuator = metrics, health checks, telemetry.",
+      "searchKeywords": "Spring Boot DevTools vs Actuator differences Turing interview",
+      "recommendedRead": "Turing Developer Test Prep Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-official-autoconfig",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Hard",
+    "isMultiSelect": false,
+    "question": "You are a developer at Turing. You need to register a custom Auto-Configuration class so that Spring Boot loads it conditionally during bootstrap. How can you register it?\n\n(Official Sample MCQ from Turing Developer Test Prep Guide)",
+    "options": [
+      "Using @Component annotation on the configuration class. It will auto-load when the application starts.",
+      "Annotating the main class with @EnableAutoConfiguration and listing the class as a parameter.",
+      "Having the auto-configuration class fully-qualified name listed under the EnableAutoConfiguration key in the META-INF/spring.factories file (or AutoConfiguration.imports in Spring Boot 3).",
+      "All of the above."
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "True custom auto-configuration classes must be registered via `META-INF/spring.factories` (under `EnableAutoConfiguration` in Boot 2.x) or in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (in Boot 3.x). Plain `@Component` classes are treated as ordinary user beans and do not participate in auto-configuration ordering or conditional fallback evaluation.",
+    "deepDive": {
+      "concept": "Spring Boot Auto-Configuration Registration Mechanics",
+      "whatToLookFor": "Auto-configurations are loaded via spring.factories or AutoConfiguration.imports, not plain component scanning.",
+      "searchKeywords": "Spring Boot custom auto-configuration META-INF spring.factories imports",
+      "recommendedRead": "Turing Developer Test Prep Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-survey-bugs",
+    "topicId": "topic-turing-seniority-survey",
+    "topicName": "Turing Work Experience Survey & Seniority Heuristics",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "How do you assess the severity of bugs in your team?\n\n(Official Turing 57-Question Work Experience Survey Sample)",
+    "options": [
+      "Other people do that for me.",
+      "I assess the severity by evaluating the impacts on user experience.",
+      "We have clear metrics to evaluate the severity of bugs.",
+      "I use my knowledge of the core metrics of the team and the company to assess the severity of bugs."
+    ],
+    "correctIndex": 3,
+    "correctIndices": [
+      3
+    ],
+    "explanation": "Option 4 exhibits top-tier engineering seniority and ownership: connecting technical defects directly to core company KPIs, business impact, and system metrics. Options 1-3 progress from passive intern behavior to individual contributor and team rules.",
+    "deepDive": {
+      "concept": "Turing Work Experience Survey Scoring Heuristic",
+      "whatToLookFor": "Select answers demonstrating proactive business impact, core metrics alignment, and end-to-end ownership.",
+      "searchKeywords": "Turing work experience survey seniority metrics",
+      "recommendedRead": "Turing Developer Test Prep Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-survey-results",
+    "topicId": "topic-turing-seniority-survey",
+    "topicName": "Turing Work Experience Survey & Seniority Heuristics",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "How do you know if you get positive or negative results on features you ship?\n\n(Official Turing 57-Question Work Experience Survey Sample)",
+    "options": [
+      "Other people let me know.",
+      "I define success metrics before working on tasks.",
+      "I ask for feedback from other people.",
+      "I define success metrics before working on tasks and have AB tests to compare the results."
+    ],
+    "correctIndex": 3,
+    "correctIndices": [
+      3
+    ],
+    "explanation": "Option 4 demonstrates senior data-driven ownership: establishing clear success metrics before coding starts and using empirical A/B testing to validate outcomes against hypotheses.",
+    "deepDive": {
+      "concept": "Data-Driven Engineering Ownership & A/B Validation",
+      "whatToLookFor": "Upfront KPI definition + empirical automated validation (A/B testing) = highest seniority score.",
+      "searchKeywords": "Engineering seniority defining metrics AB testing delivery",
+      "recommendedRead": "Turing Developer Test Prep Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-scenario-flaky",
+    "topicId": "topic-turing-insider-vetting",
+    "topicName": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "difficulty": "Hard",
+    "isMultiSelect": false,
+    "question": "You write 5 unit tests (TA, TB, TC, TD, TE) in a Spring Boot application. All 5 tests pass when run individually in isolation, but fail intermittently and unpredictably when executed together as a full suite. What is the most likely root cause?\n\n(Extracted from real Turing.com 45-minute scenario quiz screen recordings)",
+    "options": [
+      "The JUnit test engine executes test methods concurrently in separate JVM processes by default.",
+      "Shared mutable state (static variables, un-reset singleton service beans, or lingering in-memory database records) persisting across test executions.",
+      "The JVM Garbage Collector forces thread interrupts during full suite execution.",
+      "The Spring Boot test runner disables transaction rollbacks when more than 3 tests run."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Flaky test suites that pass in isolation but fail together almost universally suffer from shared mutable state. In Spring test suites, the `ApplicationContext` is cached across test classes to save bootstrap time. If a test mutates a singleton bean, sets a static variable, or leaves uncommitted rows in an embedded database without `@DirtiesContext` or proper transactional rollback, subsequent tests receive corrupted state and fail unpredictably.",
+    "deepDive": {
+      "concept": "Flaky Unit Tests & Shared Mutable State in Spring Test Suites",
+      "whatToLookFor": "Watch for cached ApplicationContext pollution, static field modifications, and uncleaned database state.",
+      "searchKeywords": "JUnit flaky tests shared mutable state Spring ApplicationContext caching DirtiesContext",
+      "recommendedRead": "Turing.com Quiz 2025 Walkthrough & Spring Testing Reference"
+    }
+  },
+  {
+    "id": "mcq-turing-scenario-clock",
+    "topicId": "topic-turing-insider-vetting",
+    "topicName": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "difficulty": "Hard",
+    "isMultiSelect": false,
+    "question": "You are designing a Spring Boot service that schedules and executes a critical task at timestamp t + x based on system time. How should you design the component and its unit tests to verify triggering behavior without waiting or sleeping in real time?\n\n(Extracted from real Turing.com 45-minute scenario quiz screen recordings)",
+    "options": [
+      "Call Thread.sleep(x) inside the test method with a 10-second test timeout.",
+      "Use System.setProperty(\"user.timezone\", ...) before running each assertion.",
+      "Inject a java.time.Clock bean into the scheduler component and supply a Clock.fixed(...) or Clock.offset(...) in unit tests to advance simulated time instantaneously.",
+      "Use ByteBuddy to intercept system timer hardware interrupts."
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "To make time-dependent code deterministic and testable without slow `Thread.sleep()` delays, decouple the component from `System.currentTimeMillis()` by injecting `java.time.Clock`. In production, Spring injects `Clock.systemUTC()`. In unit tests, you inject `Clock.fixed(instant, zone)` or mutate simulated time via `Clock.offset(...)`, allowing tests to simulate task expiration in milliseconds.",
+    "deepDive": {
+      "concept": "Unit-Testing Time-Dependent Schedulers with java.time.Clock",
+      "whatToLookFor": "Never use Thread.sleep in unit tests; inject java.time.Clock and use Clock.fixed in tests.",
+      "searchKeywords": "java.time.Clock.fixed unit testing schedulers Spring Boot",
+      "recommendedRead": "Baeldung: Introduction to the Java Clock Class"
+    }
+  },
+  {
+    "id": "mcq-turing-insider-harness",
+    "topicId": "topic-turing-insider-vetting",
+    "topicName": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "When taking the 30–45 minute Turing live coding challenge in the browser IDE, the workspace presents two classes: `Solution` and `Main`. Why must you NEVER modify the `Main` class?\n\n(Extracted from Turing Coding Challenge Practice Test Walkthrough)",
+    "options": [
+      "The Main class is digitally signed and editing it triggers automatic plagiarism detection.",
+      "The Main class is the evaluation harness that reads test suite inputs from System.in and formats outputs; modifying it desynchronizes the test runner and fails all hidden test cases.",
+      "The browser IDE crashes with an OutOfMemoryError if Main is edited.",
+      "Java does not support modifying static main methods in web IDEs."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "In Turing's browser coding environment, `Main` is the input/output test harness provided by the platform to feed edge-case inputs via `System.in` and read your solution's output stream. Editing `Main` alters how inputs are ingested or parsed, causing your code to immediately fail all hidden automated test cases even if your algorithm is correct.",
+    "deepDive": {
+      "concept": "Turing Browser IDE Harness & Test Runner Architecture",
+      "whatToLookFor": "Only write your algorithmic implementation inside the designated Solution class and methods.",
+      "searchKeywords": "Turing.com coding challenge test harness System.in runner",
+      "recommendedRead": "Solving the Turing.com Coding Challenge Practice Tests Walkthrough"
+    }
+  },
+  {
+    "id": "mcq-sb-default-jpa",
+    "topicId": "topic-spring-boot-defaults-lifecycle",
+    "topicName": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "In Spring Data JPA, what is the default implementation class instantiated at runtime for repository interfaces extending `JpaRepository`?\n\n(High-frequency 10-second Spring Boot quiz question)",
+    "options": [
+      "DefaultJpaRepository",
+      "SimpleJpaRepository",
+      "HibernateJpaRepository",
+      "CustomJpaRepository"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Spring Data JPA dynamically creates repository proxy instances backed by `org.springframework.data.jpa.repository.support.SimpleJpaRepository`. It provides the default implementation for CRUD operations like `save()`, `findById()`, and `deleteById()`, with class-level `@Transactional(readOnly = true)` annotations.",
+    "deepDive": {
+      "concept": "SimpleJpaRepository Runtime Proxy Implementation",
+      "whatToLookFor": "SimpleJpaRepository is the actual backing class for Spring Data JpaRepository proxies.",
+      "searchKeywords": "Spring Data JPA SimpleJpaRepository default implementation class",
+      "recommendedRead": "Top 25 Spring Boot MCQs (Java Guides) & Spring Data Documentation"
+    }
+  },
+  {
+    "id": "mcq-sb-default-scheduled",
+    "topicId": "topic-spring-boot-defaults-lifecycle",
+    "topicName": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "When using `@EnableScheduling` and `@Scheduled` in Spring Boot without custom task executor configuration, what is the default size of the underlying thread pool executing scheduled tasks?",
+    "options": [
+      "Equal to the number of CPU cores (Runtime.getRuntime().availableProcessors())",
+      "Fixed thread pool of 10 threads",
+      "A single-threaded executor (pool size = 1)",
+      "Unbounded cached thread pool"
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "By default, Spring Boot creates a `ScheduledExecutorService` with a pool size of exactly 1 thread. Consequently, if multiple `@Scheduled` tasks are configured, or if a single scheduled job runs longer than its execution interval, all other scheduled jobs will be blocked and starved until the running job completes. A custom `TaskScheduler` bean or `spring.task.scheduling.pool.size` must be configured for multi-threaded scheduling.",
+    "deepDive": {
+      "concept": "Default Single-Threaded Task Scheduling Pool",
+      "whatToLookFor": "Spring @Scheduled is strictly single-threaded by default; jobs block each other without custom pool config.",
+      "searchKeywords": "Spring Boot @Scheduled default thread pool size single thread TaskScheduler",
+      "recommendedRead": "Master Spring Boot Interviews — 50 Questions in One Shot!"
+    }
+  },
+  {
+    "id": "mcq-sb-request-lifecycle",
+    "topicId": "topic-spring-boot-defaults-lifecycle",
+    "topicName": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "In what exact chronological order does an incoming HTTP request travel through Spring Boot web components before reaching the `@RestController`?",
+    "options": [
+      "DispatcherServlet -> Servlet Filter -> HandlerInterceptor -> Controller",
+      "Servlet Filter -> DispatcherServlet -> HandlerInterceptor (preHandle) -> Controller",
+      "HandlerInterceptor -> Servlet Filter -> DispatcherServlet -> Controller",
+      "Servlet Filter -> Controller -> HandlerInterceptor -> DispatcherServlet"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "The Servlet Filter belongs to the Servlet API specification and executes first at the web container boundary before the request reaches the `DispatcherServlet`. The `DispatcherServlet` then consults handler mappings and invokes the Spring MVC `HandlerInterceptor.preHandle()` method before finally dispatching execution to the matching `@RestController` handler method.",
+    "deepDive": {
+      "concept": "Spring Boot Request Lifecycle (Filter vs. Interceptor vs. DispatcherServlet)",
+      "whatToLookFor": "Servlet Filter runs BEFORE DispatcherServlet; HandlerInterceptor runs AFTER DispatcherServlet.",
+      "searchKeywords": "Spring request lifecycle order Filter DispatcherServlet HandlerInterceptor Controller",
+      "recommendedRead": "Master Spring Boot Interviews — 50 Questions in One Shot!"
+    }
+  },
+  {
+    "id": "mcq-sb-interceptor-methods",
+    "topicId": "topic-spring-boot-defaults-lifecycle",
+    "topicName": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Which of the following represents the correct sequence of lifecycle callback methods on a Spring MVC `HandlerInterceptor` during request handling?",
+    "options": [
+      "postHandle -> preHandle -> afterCompletion",
+      "preHandle (before controller) -> postHandle (after controller, before view) -> afterCompletion (after complete request-response finishes)",
+      "init -> doFilter -> destroy",
+      "beforeExecution -> aroundExecution -> afterExecution"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "`HandlerInterceptor` has 3 methods executed in sequence: 1) `preHandle()` runs before the controller method executes (can return false to abort). 2) `postHandle()` runs after the controller method returns but before the view is rendered (not called if an exception was thrown). 3) `afterCompletion()` runs after the complete request-response cycle finishes (useful for cleanup and logging, always runs even on exceptions).",
+    "deepDive": {
+      "concept": "HandlerInterceptor Lifecycle Sequence (preHandle, postHandle, afterCompletion)",
+      "whatToLookFor": "preHandle -> controller -> postHandle -> view render -> afterCompletion.",
+      "searchKeywords": "Spring HandlerInterceptor lifecycle preHandle postHandle afterCompletion order",
+      "recommendedRead": "Baeldung: Guide to Spring HandlerInterceptor"
+    }
+  },
+  {
+    "id": "mcq-sb-autoconfig-exclude",
+    "topicId": "topic-spring-boot-defaults-lifecycle",
+    "topicName": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "difficulty": "Hard",
+    "isMultiSelect": true,
+    "question": "How can you explicitly disable a specific auto-configuration class (such as `WebMvcAutoConfiguration` or `DataSourceAutoConfiguration`) from loading in Spring Boot? (Choose all that apply)",
+    "options": [
+      "Using @SpringBootApplication(exclude = {WebMvcAutoConfiguration.class})",
+      "Setting spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration in application.properties",
+      "Using @EnableAutoConfiguration(exclude = {WebMvcAutoConfiguration.class})",
+      "Deleting the dependency jar from your local ~/.m2 Maven repository"
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Spring Boot provides multiple declarative mechanisms to exclude unwanted auto-configuration classes: 1) Via `@SpringBootApplication(exclude = {...})`. 2) Via `@EnableAutoConfiguration(exclude = {...})`. 3) Via the externalized configuration property `spring.autoconfigure.exclude` in `application.properties` or `application.yml`. Correct: A, B, and C.",
+    "deepDive": {
+      "concept": "Excluding Spring Boot Auto-Configurations",
+      "whatToLookFor": "Use exclude attribute on @SpringBootApplication / @EnableAutoConfiguration or spring.autoconfigure.exclude property.",
+      "searchKeywords": "Spring Boot exclude auto configuration WebMvcAutoConfiguration Amigoscode",
+      "recommendedRead": "Top 10 Spring Boot Interview Questions [2025] (Amigoscode)"
+    }
+  },
+  {
+    "id": "mcq-turing-ordering-dedup",
+    "topicId": "topic-turing-insider-vetting",
+    "topicName": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "In a rapid-fire Turing coding assessment, you are asked to remove duplicate elements from an array while strictly preserving the original first-seen appearance order (e.g. `[4, 4, 5, 5, 6, 3]` -> `[4, 5, 6, 3]`). Why will passing elements into a standard `HashSet` fail hidden test cases?",
+    "options": [
+      "HashSet does not permit integer wrappers.",
+      "HashSet does not guarantee any iteration order; hash bucket distribution reorders elements unpredictably. A LinkedHashSet must be used to preserve insertion order.",
+      "HashSet sorts all elements in natural ascending order.",
+      "HashSet throws an IllegalArgumentException when duplicate keys are inserted."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "A standard `HashSet` orders its internal buckets according to object hash codes; it makes zero guarantees regarding insertion or encounter order. When duplicates are removed, the iteration order of a `HashSet` will scramble elements unpredictably (e.g. producing `[3, 4, 5, 6]`), failing Turing test suites that require first-seen preservation. You must use `LinkedHashSet` (which maintains a doubly-linked list across entries in insertion order).",
+    "deepDive": {
+      "concept": "Turing Rapid Coding Ordering Trap: HashSet vs. LinkedHashSet",
+      "whatToLookFor": "When deduplicating or sorting by frequency, always use LinkedHashSet/LinkedHashMap to preserve original encounter order for ties.",
+      "searchKeywords": "Java remove duplicates preserve order LinkedHashSet vs HashSet Turing",
+      "recommendedRead": "Turing Interview Questions | Ai Master Ruturaj Walkthrough"
+    }
+  },
+  {
+    "id": "mcq-turing-survey-improve",
+    "topicId": "topic-turing-seniority-survey",
+    "topicName": "Turing Work Experience Survey & Seniority Heuristics",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "How do you know what you need to improve (tech skills, soft skills, etc.) to get to the next level?\n\n(Official Turing 57-Question Work Experience Survey Sample)",
+    "options": [
+      "I don't know",
+      "Sometimes, my manager and other seniors give me feedback",
+      "People tell me through 1-1 meetings (with peers, the tech lead, and the manager)",
+      "I actively ping other people to know what I need to improve and how to do it",
+      "I provide expectations as well as detailed steps on how to achieve them to people in my team"
+    ],
+    "correctIndex": 4,
+    "correctIndices": [
+      4
+    ],
+    "explanation": "Option 5 reflects highest-tier engineering leadership (Tech Lead / Staff level). While junior developers depend passively on feedback (Options 1–3) and mid-level developers actively solicit feedback (Option 4), senior engineers drive organizational growth by setting explicit performance expectations, architectural standards, and detailed execution steps for team members.",
+    "deepDive": {
+      "concept": "Turing Survey Rubric: Proactive Team Mentorship & Expectation Setting",
+      "whatToLookFor": "Look for leadership, mentoring, and defining actionable steps for peers rather than passive receipt of feedback.",
+      "searchKeywords": "Turing work experience survey engineering leadership seniority",
+      "recommendedRead": "Turing Developer Test Prep Guide (Ankit Sahu)"
+    }
+  },
+  {
+    "id": "mcq-turing-survey-learn",
+    "topicId": "topic-turing-seniority-survey",
+    "topicName": "Turing Work Experience Survey & Seniority Heuristics",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "How do you learn new technologies?\n\n(Official Turing 57-Question Work Experience Survey Sample)",
+    "options": [
+      "I teach myself how to develop applications with new technologies from scratch",
+      "I study the trade-offs of each technology and determine when to use it",
+      "I research new technologies based on the current issues in my team and decide how to use them with my colleagues",
+      "I focus more on new system architectures and design patterns"
+    ],
+    "correctIndex": 3,
+    "correctIndices": [
+      3
+    ],
+    "explanation": "Option 4 indicates senior-level engineering perspective: senior and principal engineers prioritize architectural paradigms, system trade-offs, and reusable design patterns over language-specific syntax or ad-hoc tinkering. Understanding foundational architectural trade-offs allows developers to evaluate whether an emerging technology genuinely solves scalability and resilience requirements.",
+    "deepDive": {
+      "concept": "System Architecture & Design Pattern Focus vs. Syntax Exploration",
+      "whatToLookFor": "Senior engineers prioritize architectural design patterns and system trade-offs rather than framework syntax.",
+      "searchKeywords": "Software engineering seniority system architecture design patterns trade-offs",
+      "recommendedRead": "Turing Developer Test Prep Guide (Ankit Sahu)"
+    }
+  },
+  {
+    "id": "mcq-turing-survey-quality",
+    "topicId": "topic-turing-seniority-survey",
+    "topicName": "Turing Work Experience Survey & Seniority Heuristics",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What do you do to improve your code quality?\n\n(Official Turing 57-Question Work Experience Survey Sample)",
+    "options": [
+      "Write more code and ask for code reviews",
+      "Follow the best practices of the technology",
+      "Learn from seniors in the team and ping people to collect feedback",
+      "I define coding conventions and standards for the team"
+    ],
+    "correctIndex": 3,
+    "correctIndices": [
+      3
+    ],
+    "explanation": "Option 4 demonstrates Senior / Staff level ownership: setting coding conventions, automated linting rules, architectural style guides, and PR review standards for the wider engineering team. Options 1–3 describe individual contributor behaviors (following existing guidelines and requesting feedback).",
+    "deepDive": {
+      "concept": "Defining Team Standards & Automated Quality Gates",
+      "whatToLookFor": "Senior engineers establish team-wide engineering conventions, style guidelines, and quality standards.",
+      "searchKeywords": "Engineering leadership defining coding conventions standards team quality",
+      "recommendedRead": "Turing Developer Test Prep Guide (Ankit Sahu)"
+    }
+  },
+  {
+    "id": "mcq-turing-git-checkout",
+    "topicId": "topic-turing-insider-vetting",
+    "topicName": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "Which Git command changes where the HEAD pointer points and modifies the contents of the working directory?\n\n(Official Turing Developer Test Prep Guide — DevOps / Git Stack Sample)",
+    "options": [
+      "checkout",
+      "merge",
+      "pull",
+      "mv",
+      "none of the above"
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0
+    ],
+    "explanation": "`git checkout <branch/commit>` moves the `HEAD` ref to point to the target branch or commit AND updates the files in the working directory to match the target tree. (Note: in modern Git 2.23+, `git switch` and `git restore` split this dual responsibility, but `checkout` remains the canonical answer in Turing tests). `merge` incorporates history, `pull` fetches and merges, and `mv` renames files.",
+    "deepDive": {
+      "concept": "Git HEAD Pointer Mechanics & Working Tree Synchronization",
+      "whatToLookFor": "git checkout simultaneously relocates HEAD and updates the local working tree.",
+      "searchKeywords": "Git checkout HEAD pointer working directory tree explained Pro Git",
+      "recommendedRead": "Pro Git Book (Chapter 3) & Turing Developer Test Prep Guide"
+    }
+  },
+  {
+    "id": "mcq-turing-regex-greedy",
+    "topicId": "topic-turing-insider-vetting",
+    "topicName": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Given the text below:\n> *\"Whether you think you can or think you can't — you are right.\" — Henry Ford (1863 – 1947)*\n\nUsing the regular expression pattern `you.*n` on this text, what is the exact string returned?\n\n(Official Turing Developer Test Prep Guide Sample Trap)",
+    "options": [
+      "you think you can or think you can",
+      "you think you can or think you can't",
+      "you think you can",
+      "you can or think you can"
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0
+    ],
+    "explanation": "In standard regular expressions, the `.*` quantifier is greedy by default — it consumes as many characters as possible across the string until the LAST valid match for `n`. The first match starts at the first 'you' ('you think...'). In the phrase can't, the letter after 'n' is apostrophe and 't'. The regex specifies ending at 'n', so the match greedily includes everything up to the 'n' in can't (which is 'you think you can or think you can' without the 't).",
+    "deepDive": {
+      "concept": "Greedy Quantifiers (`.*`) vs. Lazy Quantifiers (`.*?`) in Regular Expressions",
+      "whatToLookFor": "Greedy `.*` expands to the farthest possible character in the text matching the following token.",
+      "searchKeywords": "Regex greedy vs lazy quantifiers dot star trap",
+      "recommendedRead": "Turing Developer Test Prep Guide & Regular Expressions Reference"
+    }
+  },
+  {
+    "id": "mcq-jvm-5-memory-allocations",
+    "topicId": "topic-jvm-memory",
+    "topicName": "JVM Architecture, Memory Model & Garbage Collection",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "According to the official JVM specification and Turing Core Java vetting, which runtime memory area is allocated per thread and stores the address of the Java Virtual Machine instruction currently being executed by that thread?",
+    "options": [
+      "Heap Memory",
+      "Method Area (Metaspace)",
+      "Program Counter (PC) Register",
+      "Native Method Stack"
+    ],
+    "correctIndex": 2,
+    "correctIndices": [
+      2
+    ],
+    "explanation": "The JVM defines 5 runtime memory areas: 1) Program Counter (PC) Register: thread-local register that holds the address of the currently executing JVM instruction (or undefined if executing a native method). 2) JVM Stack: thread-local frames for local variables and operand stacks. 3) Heap: shared runtime memory for all class instances and arrays. 4) Method Area (Metaspace): shared storage for class metadata, runtime constant pool, and method code. 5) Native Method Stack: memory for C/C++ native methods invoked via JNI.",
+    "deepDive": {
+      "concept": "JVM 5 Runtime Data Areas",
+      "whatToLookFor": "PC Register tracks execution pointer per thread; Heap & Method Area are shared across threads; Stack & PC are thread-local.",
+      "searchKeywords": "JVM runtime data areas Program Counter Register Heap Stack Method Area",
+      "recommendedRead": "Turing 105 Core Java Interview Questions & JVM Specification"
+    }
+  },
+  {
+    "id": "mcq-java-classloader-hierarchy",
+    "topicId": "topic-jvm-memory",
+    "topicName": "JVM Architecture, Memory Model & Garbage Collection",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "In the Java Runtime Environment (JRE), what is the correct hierarchy and delegation sequence when a class is requested by the default ClassLoader mechanism?",
+    "options": [
+      "Application (System) delegates to Extension (Platform), which delegates to Bootstrap",
+      "Bootstrap delegates to Extension (Platform), which delegates to Application (System)",
+      "Extension (Platform) delegates to Bootstrap, which delegates to Application (System)",
+      "Application (System) delegates to Bootstrap, which delegates to Extension (Platform)"
+    ],
+    "correctIndex": 0,
+    "correctIndices": [
+      0
+    ],
+    "explanation": "Java uses the parent-delegation model for class loading. When the Application/System ClassLoader is asked to load a class, it delegates the request to its parent (Extension/Platform ClassLoader), which in turn delegates to the root Bootstrap ClassLoader. Only if Bootstrap cannot find the class does Extension attempt to load it; and only if Extension cannot find it does the Application ClassLoader search the application CLASSPATH.",
+    "deepDive": {
+      "concept": "ClassLoader Parent Delegation Model",
+      "whatToLookFor": "Delegation goes upwards from Application to Extension to Bootstrap before class search proceeds downwards.",
+      "searchKeywords": "Java ClassLoader delegation model hierarchy Bootstrap Extension Application",
+      "recommendedRead": "Turing 105 Core Java Interview Questions & Baeldung ClassLoaders in Java"
+    }
+  },
+  {
+    "id": "mcq-backend-clustered-index",
+    "topicId": "topic-backend-architecture-system-design",
+    "topicName": "Back-End Architecture, Database Indexing & Distributed Systems",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "What is the fundamental architectural difference between a Clustered Index and a Non-Clustered Index in relational databases (such as MySQL InnoDB or PostgreSQL)?",
+    "options": [
+      "A table can have multiple clustered indexes, but only one non-clustered index.",
+      "A clustered index physically sorts and stores actual data rows on disk in index order (allowing only one per table); a non-clustered index maintains a separate pointer structure to the physical rows.",
+      "Non-clustered indexes are stored exclusively in RAM, while clustered indexes are stored on disk.",
+      "Clustered indexes only work on primary keys; non-clustered indexes only work on foreign keys."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "A clustered index defines the physical order in which table rows are stored on the disk filesystem. Because data rows can only be physically sorted in one order, a table can have exactly ONE clustered index (typically the Primary Key). A non-clustered index is a separate B-Tree structure containing the indexed columns and reference pointers (RowIDs or clustered key) pointing to where the full row physically resides. Multiple non-clustered indexes can exist on a single table.",
+    "deepDive": {
+      "concept": "Physical Storage of Clustered vs. Non-Clustered Indexes",
+      "whatToLookFor": "Clustered index = physical table row ordering (1 per table); Non-clustered index = separate pointer list (multiple allowed).",
+      "searchKeywords": "Clustered vs non-clustered index physical storage InnoDB B-Tree",
+      "recommendedRead": "Turing Back-End Technical Interview Q&A & High Performance MySQL"
+    }
+  },
+  {
+    "id": "mcq-backend-cap-theorem",
+    "topicId": "topic-backend-architecture-system-design",
+    "topicName": "Back-End Architecture, Database Indexing & Distributed Systems",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "According to Brewer's CAP Theorem, in a distributed database system operating across a network, what occurs when a network partition (P) arises?",
+    "options": [
+      "The system can simultaneously preserve both full Consistency (C) and high Availability (A) by using asynchronous replication.",
+      "The system is forced to make a fundamental trade-off: either prioritize Consistency (CP) by rejecting unsynchronized requests, or prioritize Availability (AP) by serving potentially stale data.",
+      "Partition tolerance can be disabled at runtime to guarantee consistency and availability.",
+      "Network partitions only affect NoSQL databases; relational databases are immune to CAP constraints."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "In real-world distributed systems, network partitions (dropped packets, network latency, severed links) are unavoidable (P is non-negotiable). Therefore, when a partition occurs, an architecture MUST trade off between Consistency (CP)—refusing requests to guarantee all accessible nodes return identical, up-to-date data—and Availability (AP)—answering all requests immediately even if some nodes hold stale data.",
+    "deepDive": {
+      "concept": "CAP Theorem (Consistency vs. Availability under Network Partitions)",
+      "whatToLookFor": "In distributed systems, P is unavoidable; the trade-off is strictly CP vs AP.",
+      "searchKeywords": "CAP theorem Consistency Availability Partition Tolerance distributed systems",
+      "recommendedRead": "Turing Back-End Technical Interview Q&A & Designing Data-Intensive Applications"
+    }
+  },
+  {
+    "id": "mcq-backend-sql-injection-prepared",
+    "topicId": "topic-backend-architecture-system-design",
+    "topicName": "Back-End Architecture, Database Indexing & Distributed Systems",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Why does using parameterized `PreparedStatement` queries in JDBC / Hibernate completely prevent SQL injection attacks, whereas string concatenation does not?",
+    "options": [
+      "PreparedStatement automatically strips all quotation marks and spaces from the input string.",
+      "The database engine pre-compiles the SQL query structure and execution plan with placeholders (?) before receiving parameter values, treating parameters strictly as literal data rather than executable SQL syntax.",
+      "PreparedStatement converts SQL into binary bytecode that cannot execute SQL comments.",
+      "PreparedStatement executes queries inside a sandbox JVM that blocks destructive SQL commands like DROP or DELETE."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Parameterized queries separate SQL code from user-supplied data at the database protocol level. The SQL statement template with placeholders (?) is compiled into an execution plan first. When values are subsequently supplied, the database treats them strictly as literal column data values—even if the user input contains quotes, semicolons, or commands like OR 1=1; DROP TABLE users;. They are never evaluated by the SQL grammar parser.",
+    "deepDive": {
+      "concept": "Parameterized Queries & Precompiled AST Execution Plans",
+      "whatToLookFor": "The DB compiles the query structure first; input values are treated exclusively as literal data, never parsed as SQL tokens.",
+      "searchKeywords": "Why PreparedStatement prevents SQL injection parameterized query execution plan",
+      "recommendedRead": "Turing Back-End Technical Interview Q&A & OWASP SQL Injection Prevention Cheat Sheet"
+    }
+  },
+  {
+    "id": "mcq-backend-testing-functional-acceptance",
+    "topicId": "topic-backend-architecture-system-design",
+    "topicName": "Back-End Architecture, Database Indexing & Distributed Systems",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "In modern software engineering and Turing vetting evaluations, what is the key conceptual distinction between Functional Testing and Acceptance Testing?",
+    "options": [
+      "Functional testing is automated; acceptance testing is strictly manual.",
+      "Functional testing verifies that the software operates according to technical specifications ('Did we build the system right?'); Acceptance testing validates that the product meets business requirements and customer needs ('Did we build the right system?').",
+      "Functional testing is executed by product managers; acceptance testing is executed by QA engineers.",
+      "Functional testing applies only to backend APIs; acceptance testing applies only to frontend UI."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Functional testing is specification-focused: it verifies whether individual features and components perform according to technical design specs (checking inputs, outputs, error handling). Acceptance testing (UAT) is business- and user-focused: it validates whether the integrated system actually fulfills the end user's business goals and delivers the intended value.",
+    "deepDive": {
+      "concept": "Functional Verification vs. Acceptance Validation",
+      "whatToLookFor": "Functional = technical verification ('Build the system right'); Acceptance = business validation ('Build the right system').",
+      "searchKeywords": "Functional testing vs acceptance testing difference software engineering",
+      "recommendedRead": "Turing Back-End Technical Interview Q&A"
+    }
+  },
+  {
+    "id": "mcq-sb-runner-args",
+    "topicId": "topic-spring-boot-autoconfig",
+    "topicName": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "Both `CommandLineRunner` and `ApplicationRunner` execute callback logic immediately after the Spring Boot `ApplicationContext` is fully initialized. What is the key difference between their `run()` methods?",
+    "options": [
+      "CommandLineRunner runs asynchronously in a background thread, while ApplicationRunner runs on the main thread.",
+      "CommandLineRunner.run(String... args) receives raw string arguments, whereas ApplicationRunner.run(ApplicationArguments args) provides parsed access to option arguments (--key=value) and non-option arguments.",
+      "ApplicationRunner runs before bean initialization; CommandLineRunner runs after bean destruction.",
+      "CommandLineRunner can only be used in CLI applications, while ApplicationRunner works in web apps."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "CommandLineRunner.run(String... args) receives arguments as a raw varargs array of strings (String[]). ApplicationRunner.run(ApplicationArguments args) wraps arguments in the Spring ApplicationArguments abstraction, allowing convenient access methods like getOptionNames(), getOptionValues(\"name\"), and getNonOptionArgs().",
+    "deepDive": {
+      "concept": "Spring Boot Runner Interfaces (ApplicationRunner vs. CommandLineRunner)",
+      "whatToLookFor": "ApplicationArguments parses --key=value options; String... args delivers raw unparsed strings.",
+      "searchKeywords": "Spring Boot ApplicationRunner vs CommandLineRunner difference Baeldung",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions"
+    }
+  },
+  {
+    "id": "mcq-sb-pagination-slice",
+    "topicId": "topic-spring-jpa-transactions",
+    "topicName": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "When querying large datasets using Spring Data JPA with `Pageable`, why might returning a `Slice<T>` be significantly faster and more scalable than returning a `Page<T>`?",
+    "options": [
+      "Slice<T> caches all database rows in Redis automatically.",
+      "Page<T> executes an additional expensive SELECT COUNT(*) query to compute total elements and pages, whereas Slice<T> only fetches limit + 1 rows to check if a next slice exists without running a count query.",
+      "Slice<T> skips database row-level locking.",
+      "Slice<T> converts JPA entities to DTOs in the database driver."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "When a repository returns Page<T>, Spring Data JPA automatically executes two SQL statements: the paginated query (LIMIT ? OFFSET ?) AND an expensive SELECT COUNT(*) to calculate total elements and page count. For large tables (millions of rows), COUNT(*) causes significant performance bottlenecks. Slice<T> avoids the COUNT(*) query entirely by simply querying limit + 1 rows to know whether a 'Next' page exists.",
+    "deepDive": {
+      "concept": "Spring Data JPA Pagination Performance (Slice vs. Page)",
+      "whatToLookFor": "Use Slice for infinite scrolling or large tables to avoid SELECT COUNT(*); use Page only when exact total page count is required for UI navigation.",
+      "searchKeywords": "Spring Data JPA Page vs Slice performance count query Baeldung",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions & Spring Data JPA Guide"
+    }
+  },
+  {
+    "id": "mcq-sb-transactional-event-listener",
+    "topicId": "topic-spring-jpa-transactions",
+    "topicName": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "difficulty": "Medium",
+    "isMultiSelect": false,
+    "question": "In Spring Boot, when a service publishes an `ApplicationEvent` within an active transaction and another bean listens via `@TransactionalEventListener`, at what phase does the listener execute by default?",
+    "options": [
+      "TransactionPhase.BEFORE_COMMIT",
+      "TransactionPhase.AFTER_COMMIT",
+      "TransactionPhase.AFTER_ROLLBACK",
+      "TransactionPhase.AFTER_COMPLETION"
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "By default, @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT) only executes after the publishing transaction has successfully committed to the database. This prevents side-effects (such as sending notification emails, publishing external messages, or triggering downstream jobs) from executing if the enclosing database transaction ultimately fails or rolls back.",
+    "deepDive": {
+      "concept": "Transactional Event Handling & Phase Binding",
+      "whatToLookFor": "Default phase is AFTER_COMMIT so side-effects don't fire if the transaction aborts.",
+      "searchKeywords": "Spring @TransactionalEventListener default phase AFTER_COMMIT",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions & Baeldung Guide"
+    }
+  },
+  {
+    "id": "mcq-sb-binding-result-placement",
+    "topicId": "topic-spring-boot-defaults-lifecycle",
+    "topicName": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "difficulty": "Hard",
+    "isMultiSelect": false,
+    "question": "In a Spring Boot `@RestController`, what is the critical rule regarding the placement of the `BindingResult` parameter when validating request payloads with `@Valid` or `@Validated`?",
+    "options": [
+      "BindingResult must be the first parameter in the method signature before any @RequestBody.",
+      "BindingResult must immediately follow the validated model object parameter with no other parameters in between.",
+      "BindingResult can only be injected via class-level @Autowired field injection.",
+      "BindingResult is only permitted in @Controller view templates, not in @RestController."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "In Spring MVC, BindingResult or Errors MUST immediately follow the object being validated (@Valid @RequestBody UserDto dto, BindingResult result). If any other parameter is placed between them, Spring cannot associate the validation results with the payload, throwing an IllegalStateException or triggering default unhandled exception flow (MethodArgumentNotValidException).",
+    "deepDive": {
+      "concept": "Spring MVC Validation BindingResult Ordering Rules",
+      "whatToLookFor": "BindingResult MUST immediately follow the validated argument.",
+      "searchKeywords": "Spring MVC BindingResult immediately following @Valid parameter order",
+      "recommendedRead": "Turing 100+ Spring Boot Interview Questions & Spring Framework MVC Docs"
+    }
+  },
+  {
+    "id": "mcq-java-no-pointers",
+    "topicId": "topic-core-java-oop",
+    "topicName": "Core Java OOP, Exception Handling & Serialization",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "Why did the designers of Java intentionally omit explicit pointer manipulation (such as pointer arithmetic `ptr++` and `&addr`) found in C/C++?",
+    "options": [
+      "To make Java execute faster than C++ on all CPU architectures.",
+      "To enhance memory safety and security (preventing arbitrary memory access and buffer overflows), reduce language complexity, and enable the Garbage Collector to freely relocate and compact heap memory.",
+      "Because 64-bit operating systems do not support memory addresses.",
+      "Because pointers cannot be used in object-oriented programming."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "Omitting direct pointer arithmetic is a core security and stability design decision in Java: 1) Prevents buffer overflows, dangling pointers, and unauthorized memory access. 2) Greatly simplifies development and eliminates difficult-to-track memory corruption bugs. 3) Allows the JVM Garbage Collector to move, relocate, and compact objects on the heap during garbage collection without breaking user-space references.",
+    "deepDive": {
+      "concept": "Java Memory Safety & Managed Object References",
+      "whatToLookFor": "Security (no raw memory corruption), simplicity, and GC relocatability.",
+      "searchKeywords": "Why Java does not use pointers memory safety garbage collection",
+      "recommendedRead": "Turing 105 Core Java Interview Questions"
+    }
+  },
+  {
+    "id": "mcq-turing-remote-standup-format",
+    "topicId": "topic-turing-seniority-survey",
+    "topicName": "Turing Seniority Survey, Remote Engineering & Behavioral Vetting",
+    "difficulty": "Easy",
+    "isMultiSelect": false,
+    "question": "In high-performing distributed engineering teams at Turing, what is the standard 3-part structure for daily synchronous or asynchronous standup updates?",
+    "options": [
+      "1) Current bug count, 2) Code lines committed, 3) End of sprint projection.",
+      "1) What was accomplished yesterday, 2) What is planned for today, 3) Any blockers or impediments needing assistance.",
+      "1) Customer tickets resolved, 2) Meeting hours logged, 3) Code review score.",
+      "1) Architecture proposals, 2) Performance benchmarks, 3) Salary milestones."
+    ],
+    "correctIndex": 1,
+    "correctIndices": [
+      1
+    ],
+    "explanation": "The standard Agile / remote engineering standup format universally practiced at Turing focuses on: 1) What did you complete yesterday? 2) What are you working on today? 3) Are there any blockers / impediments preventing progress? This provides high-signal transparency without micro-management across asynchronous time zones.",
+    "deepDive": {
+      "concept": "Remote Engineering Daily Standup Cadence & Accountability",
+      "whatToLookFor": "Yesterday accomplishments -> Today commitments -> Active blockers.",
+      "searchKeywords": "Remote software developer daily standup three questions Agile",
+      "recommendedRead": "Turing Remote Developer Interview Questions & Guide"
+    }
+  }
+]

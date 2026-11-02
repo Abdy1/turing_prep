@@ -1,0 +1,107 @@
+{
+  "userProfile": {
+    "target": "Turing.com Java & Spring Boot Technical Vetting",
+    "timeline": "Coming Month",
+    "status": "In Progress"
+  },
+  "mcqStats": {
+    "totalAttempted": 0,
+    "totalCorrect": 0,
+    "accuracy": 0,
+    "missedQuestionIds": [],
+    "flaggedQuestionIds": [],
+    "topicMastery": {
+      "topic-turing-insider-vetting": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-spring-boot-defaults-lifecycle": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-core-java-oop": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-jvm-memory": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-java-concurrency": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-java-collections-streams": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-spring-boot-autoconfig": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-spring-di-beans": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-spring-jpa-transactions": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-turing-seniority-survey": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      },
+      "topic-backend-architecture-system-design": {
+        "attempts": 0,
+        "correct": 0,
+        "score": 0
+      }
+    },
+    "history": []
+  },
+  "leetcodeStats": {
+    "totalLogged": 50,
+    "byDifficulty": {
+      "Easy": 15,
+      "Medium": 31,
+      "Hard": 4
+    },
+    "byStatus": {
+      "Solved Solo": 28,
+      "Solved with Hint": 7,
+      "Needed Solution": 1,
+      "To Do": 14
+    },
+    "revisitCount": 19
+  },
+  "recommendations": [
+    {
+      "priority": "High",
+      "type": "Turing Insider Rule",
+      "title": "Never Edit the 'Main' Harness Class in Coding Tests",
+      "reason": "Editing the Main harness breaks System.in test execution. Keep all code in the Solution class."
+    },
+    {
+      "priority": "High",
+      "type": "Spring Boot Defaults",
+      "title": "Review the 10-Second Spring Boot Defaults Cheat Sheet",
+      "reason": "Top rapid-fire quiz targets: Java 17 minimum, SimpleJpaRepository, 1-thread @Scheduled pool."
+    },
+    {
+      "priority": "Medium",
+      "type": "Scenario Trap",
+      "title": "Practice Flaky Unit Test & Clock Mocking Scenarios",
+      "reason": "Turing's 45m quizzes feature production debugging scenarios on shared mutable state and java.time.Clock."
+    }
+  ]
+}

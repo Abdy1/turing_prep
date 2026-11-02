@@ -1,0 +1,337 @@
+[
+  {
+    "id": "topic-turing-insider-vetting",
+    "title": "Turing Insider Vetting Mechanics, Platform Traps & Coding Harness",
+    "category": "Turing Vetting Process",
+    "importance": "High",
+    "summary": "Real test mechanics extracted from candidate screen recordings, Lead interviewer breakdowns, and YouTube walkthroughs. Covers scenario-based MCQ traps, the 'Do Not Edit Main' harness rule, and the 4-stage vetting pipeline.",
+    "keyConcepts": [
+      "The 4-Stage Vetting Pipeline: 1) 57-Question Seniority Survey -> 2) 45-Minute Tech Stack MCQ Test -> 3) 30-45 Minute Coding Challenge (1 Easy + 1 Med/Hard preceded by an unlocked Practice Test) -> 4) 45-Minute Multi-File Application Debugging Challenge -> 5) 1-Hour AI Proctored Video Interview & Live Technical Project Deep-Dive.",
+      "The 'Do Not Edit Main' Harness Rule: In Turing's browser IDE, two classes are provided: `Main` (harness that parses `System.in` and formats output) and `Solution` (your logic). Modifying the `Main` harness class causes test runner desynchronization and immediate failure on hidden test suites.",
+      "Scenario MCQ Trap #1 — Flaky Unit Tests: When unit tests pass individually in isolation but fail randomly when run together as a test suite, the root cause is shared mutable state (static variables, uncleaned database state, or shared singletons) persisting across test executions.",
+      "Scenario MCQ Trap #2 — Time-Dependent Task Scheduling: To test schedulers triggering at t + x without waiting in real time, inject `java.time.Clock` into the component and pass `Clock.fixed(instant, zone)` or `Clock.offset(...)` in your test.",
+      "Qualifier Word Traps: Turing quiz options are often identical except for boundary qualifiers (e.g. 'at most' vs 'at least', 'strictly greater than' vs 'greater than or equal to'). Multi-select prompts require exact matching with zero partial credit.",
+      "Order Preservation Trap in Coding Drills: Removing duplicates or sorting elements by frequency must preserve original encounter order for ties. Using `HashSet` or `HashMap` scrambles ordering. Always use `LinkedHashSet` or `LinkedHashMap`.",
+      "Turing Coding Assessment Blueprint (Leaked Community Intelligence): 1) Difficulty Breakdown: 68% Medium, 27% Easy, 5% Hard. 2) Format: Typically 2 questions (1 Easy speed warmup + 1 Medium algorithmic gate) in 30–45 minutes. 3) Dominant Patterns: Arrays (56%), Strings (39%), Hash Tables (27%), Dynamic Programming (27%). 4) Prep Strategy: Master Arrays and Strings first with Two Pointers and Sliding Window; pair with Hash Tables to prevent O(N^2) timeouts; tackle 1D/2D DP afterward; skip rare Hard problems if stuck.",
+      "Recent 2025/2026 High-Frequency Problem Targets: Validate IP Address (LC #468), Minimum Length of Anagram Concatenation (LC #3138), Apply Operations to Make Sum >= k (LC #3091), Sum of Digit Differences (LC #3153), Longest Substring Without Repeating Characters (LC #3 - 91.8%), Valid Parentheses (LC #20 - 100%), and Baseball Game (LC #682 - 81.2% practice warmup)."
+    ],
+    "commonPitfalls": [
+      "Editing the `Main` class runner instead of keeping all code strictly inside the `Solution` class.",
+      "Falling for qualifier word differences ('at least' vs 'at most') in rapid 45-minute MCQ tests.",
+      "Using `HashSet` for deduplication when test cases require preserving first-seen insertion order.",
+      "Writing a shallow `flatMap` for list flattening when test cases contain arbitrarily deep irregularly nested lists (use recursion with `instanceof List<?>`)."
+    ],
+    "deepDiveKeywords": [
+      "java.time.Clock.fixed unit testing schedulers",
+      "JUnit test isolation and mutable shared state",
+      "Turing coding challenge harness System.in parsing"
+    ],
+    "references": [
+      "YouTube: Turing.com Quiz 2025 – Real Questions & Answers",
+      "YouTube: Solving the Turing.com Coding Challenge Practice Tests",
+      "YouTube: Turing Interview Questions | Ai Master Ruturaj"
+    ]
+  },
+  {
+    "id": "topic-spring-boot-defaults-lifecycle",
+    "title": "Spring Boot Defaults, Request Lifecycle & Architecture",
+    "category": "Spring Boot",
+    "importance": "High",
+    "summary": "High-yield 10-second MCQ facts: Framework defaults, Servlet Filter vs. HandlerInterceptor request execution order, auto-configuration exclusion, and Spring Boot 3 additions (WebClient, Java records).",
+    "keyConcepts": [
+      "Spring Boot 10-Second Defaults Table: Minimum Java version for Boot 3.x = Java 17; Default JpaRepository implementation = `SimpleJpaRepository`; Default JPA ORM = Hibernate; Default Logging = Logback with SLF4J; Default Embedded Server = Tomcat on port 8080; Default JSON library = Jackson; Default static assets folder = `src/main/resources/static`; Default template engine = Thymeleaf; Default Cache provider = Simple in-memory (`ConcurrentHashMap`); Default @Scheduled pool = Single-threaded executor (1 thread); Default security = HTTP Basic Authentication.",
+      "Request Execution Pipeline: Incoming HTTP Request -> Servlet Filter (Servlet API, executes before request reaches DispatcherServlet) -> DispatcherServlet -> HandlerInterceptor (Spring MVC) -> Controller.",
+      "HandlerInterceptor Lifecycle Methods: `preHandle()` (executes before controller method; returns boolean) -> `postHandle()` (executes after controller method, before view rendering) -> `afterCompletion()` (executes after the complete request-response cycle finishes).",
+      "@Component vs. @Bean: `@Component` is placed at class level for source code you own; `@Bean` is placed on methods inside `@Configuration` classes to register third-party library classes you cannot annotate directly.",
+      "Disabling Auto-Configuration: Exclude unwanted auto-configs via `@SpringBootApplication(exclude = {WebMvcAutoConfiguration.class, DataSourceAutoConfiguration.class})` or `@EnableAutoConfiguration(exclude = ...)`, or through `spring.autoconfigure.exclude` in properties.",
+      "Spring Boot 3 Modern Features: `WebClient` (from WebFlux) is the modern reactive, non-blocking replacement for deprecated `RestTemplate` (supports both synchronous and async calls); Java `record` classes provide concise immutable DTO definitions."
+    ],
+    "commonPitfalls": [
+      "Believing `DefaultJpaRepository` or `CustomJpaRepository` is the default implementation class (it is strictly `SimpleJpaRepository`).",
+      "Assuming `@Scheduled` uses a multi-threaded pool by default (it is strictly 1 thread, causing scheduled jobs to block each other unless a TaskScheduler bean is configured).",
+      "Confusing Filter and Interceptor order: Filters ALWAYS execute before HandlerInterceptors because Filters belong to the Servlet container.",
+      "Using RestTemplate in new Spring Boot 3 designs instead of non-blocking WebClient."
+    ],
+    "deepDiveKeywords": [
+      "SimpleJpaRepository source code and transactional defaults",
+      "Spring HandlerInterceptor preHandle postHandle afterCompletion order",
+      "Spring Boot @Scheduled default thread pool single threaded TaskScheduler"
+    ],
+    "references": [
+      "YouTube: Spring Boot Quiz | Top 25 Spring Boot MCQs (Java Guides)",
+      "YouTube: Master Spring Boot Interviews — 50 Questions in One Shot!",
+      "YouTube: Top 10 Spring Boot Interview Questions [2025] (Amigoscode)"
+    ]
+  },
+  {
+    "id": "topic-core-java-oop",
+    "title": "Core Java OOP, Exception Handling & Serialization",
+    "category": "Core Java",
+    "importance": "High",
+    "summary": "Core Java OOP fundamentals: Encapsulation, Inheritance, Interfaces as the multiple-inheritance solution, absence of pointers for memory safety, wrapper class autoboxing, and constructors.",
+    "keyConcepts": [
+      "Pass-by-Value Semantics: Java passes everything by value. For objects, the copy of the pointer address is passed on the stack. Reassigning the parameter reference (`b2 = new Box()`) does not affect the caller's reference, while mutating field state (`b1.value = 50`) mutates the underlying heap object.",
+      "Static Method Hiding: Static methods cannot be overridden with dynamic dispatch. Redefining a static method in a subclass hides the parent static method and is resolved at compile time based strictly on the reference type.",
+      "Bitwise Shift Operators: `>>` is an arithmetic right shift that preserves the sign bit (copies 1 for negative, 0 for positive). `>>>` is a logical unsigned right shift that always inserts 0 into the leftmost bit position.",
+      "Try-Catch-Finally Return Slot: When `return x;` executes in a try block, the current value of x is copied into an internal return register on the stack frame before `finally` runs. Mutating local variable x inside `finally` has no effect on the returned value unless `finally` explicitly executes its own `return` statement.",
+      "Serialization & Transient Fields: Classes implementing `Serializable` serialize non-static, non-transient instance state. `transient` fields are excluded from byte streams and reset to type defaults (`null`, `0`, `false`) upon deserialization without invoking constructors.",
+      "Why Java is Not Purely Object-Oriented: Java retains 8 primitive data types (boolean, byte, short, int, long, float, double, char) for execution speed and memory efficiency rather than treating every value as a heap object.",
+      "Why Java Omits Pointers: Eliminating direct pointer arithmetic protects against memory corruption, buffer overflows, and unauthorized address access, while allowing the Garbage Collector to freely relocate and compact heap memory.",
+      "Multiple Inheritance via Interfaces: Java prevents the 'Diamond Problem' of ambiguous state/method resolution by disallowing multiple class inheritance, allowing a class to implement multiple interfaces instead.",
+      "Constructor Mechanics: Constructors have no return type and share the class name. The compiler supplies a default no-argument super() constructor ONLY if no other constructor is declared."
+    ],
+    "commonPitfalls": [
+      "Confusing reference pass-by-value with pass-by-reference (expecting reassignment of a method parameter to mutate the caller variable).",
+      "Expecting static methods to exhibit runtime polymorphism when called on polymorphic reference variables (`Parent p = new Child(); p.staticMethod()`).",
+      "Assuming a `finally` block cannot execute (it always executes unless `System.exit()` is called or the JVM crashes).",
+      "Forgetting that `transient` fields are NOT restored to initial field values upon deserialization (constructors and field initializers do not run)."
+    ],
+    "deepDiveKeywords": [
+      "Java bytecode invokevirtual vs invokestatic",
+      "Java return register slot stack execution under finally bytecode inline jsr/ret",
+      "Java ObjectInputStream defaultReadObject and readResolve hook"
+    ],
+    "references": [
+      "Turing 105 Core Java Interview Questions",
+      "Baeldung: Java Pass-By-Value vs Pass-By-Reference",
+      "Baeldung: Java Serialization Guide"
+    ]
+  },
+  {
+    "id": "topic-jvm-memory",
+    "title": "JVM Architecture, Memory Model & Garbage Collection",
+    "category": "Core Java",
+    "importance": "High",
+    "summary": "Detailed breakdown of the 5 JVM runtime memory areas (Heap, Method Area/Metaspace, Stack, Native Stack, PC Register), ClassLoader parent delegation hierarchy, and JIT compilation.",
+    "keyConcepts": [
+      "Stack vs Heap: Stack stores primitive local variables and method call frames (thread-safe, fixed size, LIFO). Heap stores all objects and arrays (shared across threads, managed by GC).",
+      "Metaspace: Replaced PermGen in Java 8. Located in native OS memory; stores class metadata, runtime constant pool, and method bytecodes.",
+      "String Constant Pool (SCP): Special memory region inside the Heap. Literals (String s = \"abc\") reuse interned instances. Using `new String(\"abc\")` forces creation of a new Heap object in addition to interning the literal.",
+      "ClassLoaders Hierarchy: Bootstrap ClassLoader (rt.jar / core modules) -> Platform/Extension ClassLoader -> Application/System ClassLoader. Follows Delegation Model.",
+      "Garbage Collection Roots & Circular References: Objects are collected if unreachable from GC Roots (Thread stack frames, static variables, JNI references). Circular references with no root path ARE successfully garbage collected.",
+      "5 JVM Runtime Data Areas: 1) Program Counter (PC) Register: thread-local register containing the address of the currently executing JVM instruction. 2) JVM Stack: thread-local stack frames storing local variables, operand stack, and frame data. 3) Heap: shared runtime memory where all class instances and arrays are allocated; managed by the Garbage Collector. 4) Method Area / Metaspace: shared storage for class structures, runtime constant pool, and method code. 5) Native Method Stack: memory for executing native C/C++ methods via JNI.",
+      "ClassLoader Parent Delegation Model: When a class is requested, loading delegates upwards: Application/System ClassLoader -> Extension/Platform ClassLoader -> Bootstrap ClassLoader. Classes are searched downwards only if parent loaders cannot find the class.",
+      "JIT (Just-In-Time) Compilation: The JIT compiler monitors bytecode execution, detects 'hot spots' (frequently executed loops and methods), and compiles bytecode directly into native machine code at runtime, applying method inlining and escape analysis."
+    ],
+    "commonPitfalls": [
+      "Assuming circular object references prevent garbage collection (reference counting misconception). Java uses tracing reachability from GC Roots.",
+      "Creating Strings in tight loops with `new String(...)` instead of string literals or StringBuilder, causing excessive Eden space allocation.",
+      "Class loader leaks: Holding strong static references to objects loaded by custom or plugin classloaders prevents Metaspace unloading, leading to OutOfMemoryError: Metaspace."
+    ],
+    "deepDiveKeywords": [
+      "JVM G1GC Region allocation and SATB (Snapshot-At-The-Beginning)",
+      "String.intern() native implementation and heap deduplication",
+      "Java JIT C1 Client vs C2 Server compiler tiered compilation"
+    ],
+    "references": [
+      "Baeldung: Java Memory Management and JVM Memory Model",
+      "Turing Core Java Interview Questions #1 - #25"
+    ]
+  },
+  {
+    "id": "topic-java-concurrency",
+    "title": "Java Multithreading, Thread Lifecycle & Memory Model (JMM)",
+    "category": "Core Java",
+    "importance": "High",
+    "summary": "Thread states (NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED), synchronization primitives, monitors, volatile visibility, and thread communication.",
+    "keyConcepts": [
+      "6 Thread States: NEW (instantiated, not started), RUNNABLE (executing or ready in OS queue), BLOCKED (waiting for intrinsic lock monitor), WAITING (waiting indefinitely via wait/join/park), TIMED_WAITING (waiting with timeout e.g. sleep/wait(ms)), TERMINATED (completed execution).",
+      "start() vs run(): `start()` creates a new native OS thread and invokes `run()` asynchronously. Calling `run()` directly merely executes the method synchronously in the caller's thread.",
+      "sleep() vs wait(): `Thread.sleep(ms)` pauses execution WITHOUT releasing any synchronized locks held. `object.wait()` MUST be called inside a synchronized block on that object and RELEASES the monitor lock, re-acquiring it before waking up.",
+      "volatile keyword: Guarantees visibility across CPU caches (flushes to main memory) and prevents instruction reordering (happens-before guarantee), but DOES NOT guarantee atomicity (e.g., count++ is still not thread-safe).",
+      "synchronized Monitor: Instance synchronized method locks on `this`. Static synchronized method locks on the `Class` object (`MyClass.class`). They do NOT block each other because the monitor targets differ."
+    ],
+    "commonPitfalls": [
+      "Calling `notify()` instead of `notifyAll()` in producer-consumer queues, causing lost signals and permanent thread hangs.",
+      "Using `volatile` for compound operations like increments (`counter++`), which consists of read-modify-write and requires `AtomicInteger` or locks.",
+      "Assuming `Thread.stop()` or `Thread.suspend()` can be used (both are deprecated and deadlock-prone; use cooperative interruption with `Thread.currentThread().isInterrupted()`)."
+    ],
+    "deepDiveKeywords": [
+      "Java Memory Model happens-before order",
+      "AQS (AbstractQueuedSynchronizer) state and FIFO wait queue",
+      "StampedLock vs ReentrantReadWriteLock performance under read-heavy loads"
+    ],
+    "references": [
+      "Baeldung: Java Concurrency and Thread Safety",
+      "Java Concurrency in Practice (Brian Goetz)"
+    ]
+  },
+  {
+    "id": "topic-java-collections-streams",
+    "title": "Collections Framework, Generics & Java 8+ Streams",
+    "category": "Core Java",
+    "importance": "High",
+    "summary": "HashMap internal mechanics (treeification, bucket rehashing), ConcurrentHashMap thread-safety, Fail-Fast vs Fail-Safe, equals/hashCode contract, and Stream operations.",
+    "keyConcepts": [
+      "HashMap Internals (Java 8+): Array of buckets (Node<K,V>[]). When a bucket exceeds TREEIFY_THRESHOLD (8 items) AND total table capacity >= 64, the linked list converts to a Red-Black Tree (O(log N) worst-case lookup instead of O(N)).",
+      "ConcurrentHashMap (Java 8): Replaced Java 7 Segment locks with CAS (Compare-And-Swap) for empty bucket insertion and synchronized locking only on the first node of the collision chain. Permits concurrent reads without locking.",
+      "Fail-Fast vs Fail-Safe Iterators: Fail-Fast (ArrayList, HashMap) throws `ConcurrentModificationException` immediately if collection is structurally modified during iteration (via modCount check). Fail-Safe / Weakly-Consistent (CopyOnWriteArrayList, ConcurrentHashMap) iterates over a snapshot or live safe view without throwing.",
+      "equals() and hashCode() Contract: If `a.equals(b)` is true, `a.hashCode()` MUST equal `b.hashCode()`. Violating this causes HashMaps/HashSets to fail to retrieve keys or store duplicate entries.",
+      "Stream Operations: Intermediate (lazy evaluation: map, filter, flatMap) vs Terminal (eager execution: collect, reduce, forEach, findFirst). Streams cannot be reused once a terminal operation has executed."
+    ],
+    "commonPitfalls": [
+      "Modifying the state of an object that affects its `hashCode()` while it is stored as a key in a `HashMap`, making it unretrievable.",
+      "Overriding `equals()` without overriding `hashCode()`, breaking HashMap lookups.",
+      "Using `List.of()` or `Arrays.asList()` and attempting to add/remove elements (throws `UnsupportedOperationException`)."
+    ],
+    "deepDiveKeywords": [
+      "HashMap TREEIFY_THRESHOLD and UNTREEIFY_THRESHOLD",
+      "ConcurrentHashMap size calculation with CounterCell array",
+      "Stream.parallel() common ForkJoinPool saturation risks"
+    ],
+    "references": [
+      "Baeldung: Java Collections Interview Questions",
+      "Baeldung: Java 8 Stream API Guide"
+    ]
+  },
+  {
+    "id": "topic-spring-boot-autoconfig",
+    "title": "Spring Boot Auto-Configuration, Starters & Actuator",
+    "category": "Spring Boot",
+    "importance": "High",
+    "summary": "How Spring Boot starts up, @SpringBootApplication composition, auto-configuration registration mechanisms (spring.factories vs AutoConfiguration.imports), DevTools vs Actuator, and property precedence.",
+    "keyConcepts": [
+      "@SpringBootApplication Composition: Combines 3 essential annotations: `@Configuration` (declares bean factory methods), `@EnableAutoConfiguration` (enables auto-config guessing based on classpath jars), and `@ComponentScan` (scans package and subpackages for stereotype components).",
+      "Auto-Configuration Registration: In Spring Boot 2.x, auto-configurations are listed under `org.springframework.boot.autoconfigure.EnableAutoConfiguration` in `META-INF/spring.factories`. In Spring Boot 3.x, registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`.",
+      "Conditional Annotations: `@ConditionalOnClass`, `@ConditionalOnMissingBean`, `@ConditionalOnProperty(name = ..., havingValue = ...)` govern whether an auto-configuration class or bean will load.",
+      "DevTools vs Actuator (Classic Turing Test Question): DevTools provides fast dev restart, LiveReload, and H2 console defaults during development (automatically disabled in production). Actuator provides production-ready monitoring, metrics, health checks, CPU/RAM stats, and audit endpoints (`/actuator/health`, `/actuator/metrics`).",
+      "Externalized Configuration Precedence: Command-line arguments > Java System properties > OS environment variables > Profile-specific properties (`application-{profile}.properties`) > Default `application.properties`."
+    ],
+    "commonPitfalls": [
+      "Confusing DevTools with Actuator: DevTools NEVER monitors production system metrics or CPU/RAM; that is exclusively Actuator's responsibility.",
+      "Placing `@SpringBootApplication` in a subpackage, causing `@ComponentScan` to miss services and repositories located in sibling or parent packages.",
+      "Overwriting custom beans because `@ConditionalOnMissingBean` was placed on the user bean rather than the auto-configuration fallback bean."
+    ],
+    "deepDiveKeywords": [
+      "Spring Boot 3 AutoConfiguration.imports mechanism",
+      "AutoConfigurationSorter and @AutoConfigureAfter",
+      "Actuator micrometer metrics export to Prometheus"
+    ],
+    "references": [
+      "Turing Developer Test Prep Guide: Spring Boot Sample MCQs",
+      "Turing 100+ Spring Boot Interview Questions",
+      "Baeldung: Spring Boot Interview Questions"
+    ]
+  },
+  {
+    "id": "topic-spring-di-beans",
+    "title": "Spring Dependency Injection, Bean Lifecycle & Stereotypes",
+    "category": "Spring Boot",
+    "importance": "High",
+    "summary": "Inversion of Control (IoC), Bean scopes (Singleton, Prototype, Request, Session), stereotype differences (@Component, @Service, @Repository, @RestController), and resolving injection ambiguity.",
+    "keyConcepts": [
+      "Bean Scopes: `singleton` (default, one instance per Spring ApplicationContext container), `prototype` (new instance every time requested), `request` (one per HTTP request), `session` (one per HTTP session), `application` (one per ServletContext).",
+      "Stereotype Annotations: `@Component` (generic managed bean), `@Service` (service layer semantics), `@Repository` (persistence layer; automatically enables automatic persistence exception translation into Spring's DataAccessException hierarchy), `@Controller` (Spring MVC views), `@RestController` (`@Controller` + `@ResponseBody` on all methods).",
+      "Resolving NoUniqueBeanDefinitionException: When multiple beans implement the same interface, resolve using `@Qualifier(\"specificBeanName\")` at injection point or marking the default implementation with `@Primary`.",
+      "Bean Lifecycle Phases: Instantiation -> Populate Properties -> Aware interfaces (BeanNameAware, ApplicationContextAware) -> BeanPostProcessor `postProcessBeforeInitialization` -> `@PostConstruct` / InitializingBean -> Custom `initMethod` -> BeanPostProcessor `postProcessAfterInitialization` -> In Use -> `@PreDestroy` / DisposableBean -> Destruction.",
+      "Constructor vs Field Injection: Constructor injection is strongly recommended by Spring: enables immutability (final fields), prevents NullPointerExceptions in unit tests without Spring context, and catches circular dependencies at compile/startup."
+    ],
+    "commonPitfalls": [
+      "Field injection (`@Autowired` on private field) hides dependencies, impedes standalone unit testing without reflection, and masks violation of Single Responsibility Principle.",
+      "Injecting a `prototype` scoped bean into a `singleton` scoped bean without using `ObjectProvider` or `@Lookup` method: the prototype bean is only instantiated ONCE at singleton initialization.",
+      "Forgetting that `@Repository` provides automated unchecked exception translation, which plain `@Component` does not."
+    ],
+    "deepDiveKeywords": [
+      "Spring BeanPostProcessor CGLIB vs JDK Dynamic Proxy generation",
+      "ObjectProvider and ScopedProxyMode.TARGET_CLASS",
+      "Spring 3-level singletonObjects cache for circular dependency resolution"
+    ],
+    "references": [
+      "Baeldung: Spring Framework Interview Questions",
+      "Spring Framework Reference: The IoC Container"
+    ]
+  },
+  {
+    "id": "topic-spring-jpa-transactions",
+    "title": "Spring Data JPA, @Transactional Mechanics & Web Layer",
+    "category": "Spring Boot",
+    "importance": "High",
+    "summary": "JPA Repository patterns, @Transactional proxy architecture, transaction propagation behaviors, REST error handling with @RestControllerAdvice, and testing slices.",
+    "keyConcepts": [
+      "@Transactional Proxy Mechanism: Spring creates a CGLIB or JDK dynamic proxy around the bean. The proxy intercepts calls, starts a transaction via `PlatformTransactionManager`, commits on success, or rolls back on runtime exceptions.",
+      "Self-Invocation Trap: Calling a `@Transactional` method from another method in the SAME class bypasses the Spring proxy! The call executes as a plain local method call without transaction boundaries. Fix: Inject self or move to a separate bean.",
+      "Transaction Propagation Rules: `REQUIRED` (default: join existing or create new), `REQUIRES_NEW` (always suspends existing and opens a brand new physical transaction), `NESTED` (uses JDBC savepoints within existing transaction; inner rollback does not abort outer), `SUPPORTS` (runs transactionally if one exists, otherwise non-transactional), `MANDATORY` (throws exception if no existing transaction).",
+      "Rollback Rules: By default, Spring rolls back ONLY on unchecked exceptions (`RuntimeException` and `Error`). It DOES NOT roll back on checked exceptions unless explicitly configured: `@Transactional(rollbackFor = Exception.class)`.",
+      "REST Error Handling: `@RestControllerAdvice` combined with `@ExceptionHandler` provides centralized, structured HTTP error responses (e.g., ProblemDetail or custom DTO) across all `@RequestMapping` controllers.",
+      "Testing Slices: `@DataJpaTest` configures only repository beans and in-memory DB for fast JPA testing; `@WebMvcTest` bootstraps only MVC controllers and mock beans."
+    ],
+    "commonPitfalls": [
+      "Expecting `@Transactional` on private or protected methods to work (Spring proxy by default intercepts only `public` methods).",
+      "Not specifying `rollbackFor = Exception.class` when throwing checked exceptions in transactional methods, causing transactions to commit despite errors.",
+      "The N+1 Query Problem in JPA: Fetching child entities one-by-one in a loop instead of using `@EntityGraph` or `JOIN FETCH`."
+    ],
+    "deepDiveKeywords": [
+      "Spring TransactionSynchronizationManager and ThreadLocal connection binding",
+      "Hibernate N+1 query problem JOIN FETCH vs @BatchSize",
+      "Spring Boot 3 ProblemDetail RFC 7807 global exception handling"
+    ],
+    "references": [
+      "Baeldung: Transactions with Spring and JPA",
+      "Baeldung: Spring Data JPA Interview Questions"
+    ]
+  },
+  {
+    "id": "topic-turing-seniority-survey",
+    "title": "Turing Seniority Survey, Remote Engineering & Behavioral Vetting",
+    "category": "Turing Vetting Process",
+    "importance": "High",
+    "summary": "Deconstructing Turing's 57-question Work Experience Survey, remote developer best practices (asynchronous communication, daily standup cadence, blameless postmortems), and official test strategies.",
+    "keyConcepts": [
+      "The 5 Core Seniority Dimensions (From Official Turing Survey): 1) Self-Improvement: Mentoring & providing expectations + detailed steps for team members (Staff/Lead) vs. waiting for feedback. 2) Technology Learning: Prioritizing system architectures, design patterns, and scalability trade-offs over mere syntax. 3) Bug Severity: Tying technical defects directly to core company & team business metrics. 4) Code Quality: Defining team-wide coding conventions, linters, and architectural standards vs. asking for reviews. 5) Measuring Results: Defining upfront KPIs before writing code and running A/B tests to validate impact.",
+      "Seniority Progression Model: Turing options are intentionally structured across 4 seniority tiers: Level 1 Passive ('Other people do it for me') -> Level 2 Individual Contributor ('I assess impact on user UX') -> Level 3 Team Contributor ('We have clear team metrics') -> Level 4 Senior / Staff Lead ('I define core metrics aligned with business goals, establish standards, and run A/B validation').",
+      "Official Test Retake Policy: If a candidate fails a Turing tech stack test, Turing allows retaking the test 3 months after the unsuccessful attempt. Use this 3-month window to master missed topics.",
+      "The 'Cover-the-Options' Exam Strategy: Candidates often lose marks by falling for distractors. Cover the options while reading the prompt, formulate your answer first, then look for the match. If not found, rephrase the prompt and evaluate each choice as an independent True/False statement.",
+      "Qualifier Trap Awareness: Watch closely for qualifier words ('at most', 'at least', 'strictly', 'only', 'all of the above'). Pay special attention to whether a question is single-choice or 'Choose all that apply'.",
+      "Remote Engineering Daily Standup Cadence: Standard 3-part update: 1) What was completed yesterday, 2) What is planned for today, 3) Any active blockers/impediments needing assistance.",
+      "Task Decomposition via Black-Box Interfaces: In distributed teams, split large initiatives into modular black-box components with defined inputs/outputs so colleagues and QA can test and integrate asynchronously.",
+      "Blameless Postmortems & Deadline Ownership: When deadlines slip or outages occur, high-scoring Turing engineers take personal accountability, conduct 5-Whys root-cause analysis, and build automated preventative guardrails."
+    ],
+    "commonPitfalls": [
+      "Selecting passive or reactive answers ('I ask my manager' or 'QA informs me when bugs occur').",
+      "Focusing exclusively on localized code output rather than company-wide metrics and customer business impact.",
+      "Failing to pre-define success metrics prior to feature delivery (always favor upfront KPIs + A/B testing).",
+      "Rushing through questions without noticing subtle qualifier words ('strictly greater than' vs 'greater than or equal to')."
+    ],
+    "deepDiveKeywords": [
+      "Engineering ownership matrix RACI model",
+      "DORA metrics (Deployment Frequency, Lead Time, Change Failure Rate, MTTR)",
+      "A/B testing statistical significance and KPI tracking",
+      "Turing 3-month retake policy and preparation roadmap"
+    ],
+    "references": [
+      "Turing Developer Test Prep Guide: Six Tips to Prepare for Turing Tests (Ankit Sahu)",
+      "Turing Developer Test Prep Guide: Work Experience Survey Section"
+    ]
+  },
+  {
+    "id": "topic-backend-architecture-system-design",
+    "title": "Back-End Architecture, Database Indexing & Distributed Systems",
+    "category": "System Design & Architecture",
+    "importance": "High",
+    "summary": "Core backend concepts tested in Turing vetting: Clustered vs Non-Clustered indexing, CAP Theorem trade-offs, SQL Injection prevention, Web Server vs App Server, Microservices vs Monoliths, DRY/DIE principles, and Functional vs Acceptance testing.",
+    "keyConcepts": [
+      "Clustered vs Non-Clustered Indexes: A Clustered Index physically orders the actual data rows on disk in index order (hence exactly ONE clustered index per table). A Non-Clustered Index is a separate secondary B-Tree containing index columns and row pointers (RowIDs or clustered keys) pointing to physical rows (multiple allowed).",
+      "Brewer's CAP Theorem: In any distributed network data store, network partitions (P) are unavoidable. When a partition occurs, the system must choose between Consistency (CP - rejecting unsynchronized requests) and Availability (AP - serving potentially stale data).",
+      "SQL Injection Mitigation via PreparedStatements: Prepared statements pre-compile the SQL grammar and execution plan with placeholders (?) before parameter values arrive. Input values are transmitted separately as literal data tokens and are never evaluated as executable SQL syntax.",
+      "Web Servers (Nginx/Apache) vs Application Servers (Tomcat/Jetty): Web servers handle reverse proxying, SSL termination, static asset caching, and load balancing; Application servers execute JVM bytecode, manage servlet lifecycles, and handle dynamic business logic.",
+      "Functional Testing vs Acceptance Testing (UAT): Functional testing verifies whether the system functions according to technical specifications ('Did we build the system right?'); Acceptance testing validates whether the product fulfills real user and business needs ('Did we build the right system?').",
+      "DRY vs DIE Principles: DRY (Don't Repeat Yourself) advocates a single authoritative source of truth in code. DIE (Duplication Is Evil) reinforces that even small amounts of duplicated logic cause severe maintenance desynchronization."
+    ],
+    "commonPitfalls": [
+      "Adding excessive non-clustered indexes to write-heavy tables, causing severe insert/update latency.",
+      "Using string concatenation in SQL queries instead of PreparedStatement parameterized queries.",
+      "Assuming distributed databases can guarantee both strict Consistency and 100% Availability during network partitions."
+    ],
+    "deepDiveKeywords": [
+      "Clustered index B-Tree leaf node page layout",
+      "CAP theorem PACELC trade-offs",
+      "PreparedStatement binary wire protocol",
+      "Database indexing selectivity and cardinality"
+    ],
+    "references": [
+      "Turing Back-End Technical Interview Questions",
+      "Designing Data-Intensive Applications (Martin Kleppmann)",
+      "High Performance MySQL (Baron Schwartz)"
+    ]
+  }
+]

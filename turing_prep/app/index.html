@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Turing.com Prep Hub — Knowledge Base & Adaptive Learning</title>
+  
+  <!-- PWA & Mobile Web App Meta -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TuringPrep">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="theme-dark">
+  <div id="app" class="app-layout">
+    <!-- Top Navigation -->
+    <header class="app-header">
+      <div class="brand-group">
+        <img src="favicon.svg" alt="Logo" class="app-logo">
+        <div class="brand-title">
+          <h1>Turing Prep Hub</h1>
+          <span class="brand-subtitle">Java & Spring Boot Adaptive Master</span>
+        </div>
+      </div>
+
+      <!-- Gamified Level & XP Bar -->
+      <div class="xp-container" id="xp-container" title="Earn XP through MCQs and LeetCode drills">
+        <div class="xp-top-row">
+          <span class="xp-level-badge" id="xp-level-badge">Lvl 1 · Java Apprentice</span>
+          <span class="xp-text" id="xp-text">0 / 150 XP</span>
+        </div>
+        <div class="xp-bar-track">
+          <div class="xp-bar-fill" id="xp-bar-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Bar -->
+      <div class="header-metrics">
+        <div class="metric-pill streak-pill" id="metric-streak-pill" title="Daily Learning Streak">
+          <span class="metric-label">Streak</span>
+          <span class="metric-val" id="metric-streak-count">🔥 1 Day</span>
+        </div>
+        <div class="metric-pill" title="MCQ Accuracy Rate">
+          <span class="metric-label">Accuracy</span>
+          <span class="metric-val" id="metric-accuracy">0%</span>
+        </div>
+        <div class="metric-pill" title="MCQs Answered">
+          <span class="metric-label">MCQs</span>
+          <span class="metric-val" id="metric-mcq-count">0/0</span>
+        </div>
+        <div class="metric-pill" title="LeetCode Problems Tracked">
+          <span class="metric-label">LeetCode</span>
+          <span class="metric-val" id="metric-lc-count">0 Solved</span>
+        </div>
+        <div class="metric-pill warning" id="metric-revisit-pill" title="Problems & Questions Flagged for Review">
+          <span class="metric-label">Review</span>
+          <span class="metric-val" id="metric-review-count">0</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound FX (Chimes & Fanfare)">🔊</button>
+        <button id="theme-toggle-btn" class="icon-btn" title="Toggle Light/Dark Theme">🌓</button>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="dashboard">
+        <span class="tab-icon">📊</span> Dashboard & Adaptive Guide
+      </button>
+      <button class="nav-tab" data-tab="mcq">
+        <span class="tab-icon">❓</span> MCQ Practice & Teaching
+      </button>
+      <button class="nav-tab" data-tab="leetcode">
+        <span class="tab-icon">💻</span> LeetCode Tracker
+      </button>
+      <button class="nav-tab" data-tab="knowledge">
+        <span class="tab-icon">📚</span> Knowledge Base Notes
+      </button>
+      <button class="nav-tab" data-tab="sync">
+        <span class="tab-icon">⚙️</span> Data & AI Sync
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-container">
+
+      <!-- ================= TAB 1: DASHBOARD ================= -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <div class="dashboard-grid">
+          
+          <!-- Readiness & Overview Card -->
+          <div class="card card-hero">
+            <div class="hero-content">
+              <h2>Turing Vetting Readiness</h2>
+              <p class="hero-desc">Your personalized readiness score based on MCQ accuracy, topic coverage, and algorithmic problem tracking.</p>
+              
+              <div class="readiness-meter">
+                <div class="readiness-ring">
+                  <span id="readiness-score" class="readiness-score">0%</span>
+                  <span class="readiness-sub">Readiness</span>
+                </div>
+                <div class="readiness-details">
+                  <div class="stat-row">
+                    <span>MCQ Mastery Score:</span>
+                    <strong id="dash-mcq-score">0%</strong>
+                  </div>
+                  <div class="stat-row">
+                    <span>LeetCode Logged:</span>
+                    <strong id="dash-lc-score">0 Problems</strong>
+                  </div>
+                  <div class="stat-row">
+                    <span>Target Timeline:</span>
+                    <span class="badge badge-accent">Next 4 Weeks</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Weak Spots Quick Alert -->
+            <div id="weak-spots-alert" class="alert-box alert-warning">
+              <div class="alert-header">
+                <span class="alert-icon">⚠️</span>
+                <strong>Identified Focus Areas (Needs Attention):</strong>
+              </div>
+              <ul id="weak-spots-list" class="weak-spots-list">
+                <li>Take your first MCQ quiz to calculate weak spots!</li>
+              </ul>
+              <button id="quick-practice-weak-btn" class="btn btn-warning-outline btn-sm">Practice Focus Topics Now</button>
+            </div>
+          </div>
+
+          <!-- Daily Quest & Quick Blitz Card -->
+          <div class="card quest-card">
+            <div class="card-header">
+              <h3>🎯 Daily Quest & Quick Blitz</h3>
+              <span class="badge badge-accent" id="quest-streak-badge">🔥 1 Day Streak</span>
+            </div>
+            <div class="quest-body">
+              <div class="quest-row">
+                <div class="quest-info">
+                  <strong>Daily Target: 5 MCQs</strong>
+                  <span class="quest-sub" id="quest-goal-sub">0 of 5 completed today</span>
+                </div>
+                <span class="quest-xp-reward">+50 XP</span>
+              </div>
+              <div class="progress-track" style="margin-top:0.6rem;margin-bottom:1rem;height:10px;">
+                <div id="quest-progress-fill" class="progress-fill" style="width: 0%; background: linear-gradient(90deg, #10b981, #38bdf8);"></div>
+              </div>
+
+              <div class="quest-actions">
+                <button id="btn-quick-warmup" class="btn btn-primary" style="width:100%;">⚡ Launch 5-Question Daily Warmup Drill</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Recommendations Card -->
+          <div class="card">
+            <div class="card-header">
+              <h3>🎯 Adaptive Recommendations</h3>
+              <span class="badge badge-info">Auto-generated</span>
+            </div>
+            <div id="recommendations-container" class="recommendations-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Topic Mastery Overview -->
+          <div class="card card-wide">
+            <div class="card-header">
+              <h3>📈 Topic Mastery Breakdown</h3>
+              <span class="card-subtitle">Performance across Turing core domains</span>
+            </div>
+            <div id="topic-mastery-grid" class="mastery-grid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- 4-Week Turing Prep Roadmap -->
+          <div class="card card-wide">
+            <div class="card-header">
+              <h3>🗓️ 4-Week Turing Assessment Strategy</h3>
+              <span class="card-subtitle">Recommended milestones to pass the Turing vetting pipeline</span>
+            </div>
+            <div class="roadmap-grid">
+              <div class="roadmap-step">
+                <div class="step-num">Week 1</div>
+                <h4>Core Java & JVM Internals</h4>
+                <p>Stack vs Heap, String Pool, ClassLoaders, GC Roots & Algorithms, Thread States & Synchronization.</p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Week 2</div>
+                <h4>Collections, Streams & Survey</h4>
+                <p>HashMap treeification, ConcurrentHashMap, equals/hashCode contract, Streams, and 57-Question Seniority Survey.</p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Week 3</div>
+                <h4>Spring Boot & JPA Transactions</h4>
+                <p>Auto-configuration, DevTools vs Actuator, @Transactional proxy pitfalls, Bean Scopes, and REST slice tests.</p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Week 4</div>
+                <h4>Turing Coding Drills & Mocks</h4>
+                <p>Drill Top 10 Turing problems (Stack, Sliding Window, DP Tickets, Koko Bananas) under 45-min timed constraints.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Turing Insider 5-Stage Vetting Pipeline -->
+          <div class="card card-wide">
+            <div class="card-header">
+              <h3>🕵️ Turing Insider Vetting Pipeline & Platform Rules</h3>
+              <span class="badge badge-accent">Extracted from Candidate Walkthroughs</span>
+            </div>
+            <div class="roadmap-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+              <div class="roadmap-step">
+                <div class="step-num">Stage 1 · 20-30m</div>
+                <h4>57-Question Survey</h4>
+                <p>Evaluates seniority & ownership. Always choose proactive metrics and A/B testing over passive triage.</p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Stage 2 · 45m</div>
+                <h4>Tech Stack MCQ</h4>
+                <p>Production scenarios (flaky tests from shared mutable state, clock mocking, "at least" vs "at most" qualifiers).</p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Stage 3 · 30-45m</div>
+                <h4>Live Coding Challenge</h4>
+                <p>1 Easy + 1 Medium/Hard (practice on Baseball Game). <strong>Rule: NEVER edit Main harness class!</strong></p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Stage 4 · 45m</div>
+                <h4>Multi-File Debugging</h4>
+                <p>Provided a broken multi-file app; locate bugs and write missing implementations in designated blocks.</p>
+              </div>
+              <div class="roadmap-step">
+                <div class="step-num">Stage 5 · 60m</div>
+                <h4>AI Video & Client Round</h4>
+                <p>AI proctored full-screen video interview followed by live technical deep-dive into past project trade-offs.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spring Boot 10-Second Defaults Cheat Sheet -->
+          <div class="card card-wide">
+            <div class="card-header">
+              <h3>⚡ Spring Boot 10-Second Defaults & Lifecycle Cheat Sheet</h3>
+              <span class="badge badge-info">Top MCQ Rapid Targets</span>
+            </div>
+            <div class="defaults-table-container" style="overflow-x:auto;">
+              <table class="defaults-table" style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                <thead>
+                  <tr style="border-bottom:1px solid var(--border-color);text-align:left;color:var(--text-secondary);">
+                    <th style="padding:0.6rem;">Feature / Component</th>
+                    <th style="padding:0.6rem;">Spring Boot Default</th>
+                    <th style="padding:0.6rem;">Crucial Interview Trap / Nuance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom:1px dashed var(--border-color);">
+                    <td style="padding:0.6rem;"><strong>Minimum Java Version (Boot 3.x)</strong></td>
+                    <td style="padding:0.6rem;"><span class="badge badge-easy">Java 17</span></td>
+                    <td style="padding:0.6rem;color:var(--text-secondary);">Java 8 and 11 are not supported in Spring Boot 3+</td>
+                  </tr>
+                  <tr style="border-bottom:1px dashed var(--border-color);">
+                    <td style="padding:0.6rem;"><strong>Default JpaRepository Implementation</strong></td>
+                    <td style="padding:0.6rem;"><code style="color:var(--accent-cyan);">SimpleJpaRepository</code></td>
+                    <td style="padding:0.6rem;color:var(--text-secondary);">NOT DefaultJpaRepository or CustomJpaRepository</td>
+                  </tr>
+                  <tr style="border-bottom:1px dashed var(--border-color);">
+                    <td style="padding:0.6rem;"><strong>Default @Scheduled Thread Pool</strong></td>
+                    <td style="padding:0.6rem;"><span class="badge badge-hard">Single-threaded (1 thread)</span></td>
+                    <td style="padding:0.6rem;color:var(--text-secondary);">Jobs block each other unless a TaskScheduler bean is configured</td>
+                  </tr>
+                  <tr style="border-bottom:1px dashed var(--border-color);">
+                    <td style="padding:0.6rem;"><strong>Request Execution Flow</strong></td>
+                    <td style="padding:0.6rem;"><code style="color:var(--accent-cyan);">Filter → DispatcherServlet → Interceptor</code></td>
+                    <td style="padding:0.6rem;color:var(--text-secondary);">Servlet Filter runs BEFORE DispatcherServlet; Interceptor runs AFTER</td>
+                  </tr>
+                  <tr style="border-bottom:1px dashed var(--border-color);">
+                    <td style="padding:0.6rem;"><strong>Default Caching Provider</strong></td>
+                    <td style="padding:0.6rem;">Simple in-memory (<code style="color:var(--accent-cyan);">ConcurrentHashMap</code>)</td>
+                    <td style="padding:0.6rem;color:var(--text-secondary);">Enabled via @EnableCaching; Redis requires separate starter</td>
+                  </tr>
+                  <tr style="border-bottom:1px dashed var(--border-color);">
+                    <td style="padding:0.6rem;"><strong>Embedded Server & Logging</strong></td>
+                    <td style="padding:0.6rem;">Apache Tomcat (port 8080) & Logback (SLF4J)</td>
+                    <td style="padding:0.6rem;color:var(--text-secondary);">Default JSON library is Jackson; Static assets in src/main/resources/static</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= TAB 2: MCQ PRACTICE ================= -->
+      <section id="tab-mcq" class="tab-pane">
+        <div class="mcq-layout">
+          
+          <!-- Filters & Controls Bar -->
+          <div class="mcq-controls-card">
+            <div class="controls-row">
+              <div class="filter-group">
+                <label for="filter-topic">Topic:</label>
+                <select id="filter-topic" class="custom-select">
+                  <option value="all">All Topics (Comprehensive)</option>
+                </select>
+              </div>
+
+              <div class="filter-group">
+                <label for="filter-difficulty">Difficulty:</label>
+                <select id="filter-difficulty" class="custom-select">
+                  <option value="all">All Difficulties</option>
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
+
+              <div class="filter-group checkbox-group">
+                <label class="toggle-checkbox">
+                  <input type="checkbox" id="filter-weak-only">
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-text">Focus on Mistakes & Flagged Only</span>
+                </label>
+              </div>
+
+              <div class="filter-group checkbox-group">
+                <label class="toggle-checkbox">
+                  <input type="checkbox" id="toggle-study-mode">
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-text" style="color:var(--accent-cyan);font-weight:600;">📖 Study Mode (Show Explanations Always)</span>
+                </label>
+              </div>
+
+              <div class="filter-group checkbox-group">
+                <label class="toggle-checkbox">
+                  <input type="checkbox" id="toggle-blitz-timer">
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-text" style="color:var(--accent-amber);font-weight:600;">⏱️ Blitz Timer (60s)</span>
+                </label>
+              </div>
+
+              <div class="controls-actions">
+                <button id="btn-reset-quiz-state" class="btn btn-secondary btn-sm" title="Reset answers for current filter">Restart Quiz</button>
+              </div>
+            </div>
+
+            <!-- Quiz Progress Tracker -->
+            <div class="quiz-status-bar">
+              <span id="quiz-progress-text">Question 1 of 8</span>
+              <div class="progress-track">
+                <div id="quiz-progress-fill" class="progress-fill" style="width: 12.5%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Question Card -->
+          <div id="mcq-card" class="mcq-card">
+            <!-- Blitz Countdown Bar -->
+            <div id="blitz-timer-container" class="blitz-timer-container hidden">
+              <div class="blitz-timer-track">
+                <div id="blitz-timer-fill" class="blitz-timer-fill" style="width: 100%;"></div>
+              </div>
+              <span id="blitz-timer-text" class="blitz-timer-text">⏱️ 60s</span>
+            </div>
+
+            <div class="mcq-header">
+              <div class="mcq-badges">
+                <span id="mcq-topic-badge" class="badge badge-topic">Topic</span>
+                <span id="mcq-diff-badge" class="badge badge-diff">Medium</span>
+                <span id="mcq-type-badge" class="badge badge-accent hidden">Multi-Select</span>
+                <span id="mcq-id-badge" class="badge badge-id">#1</span>
+              </div>
+              <div style="display:flex;gap:0.5rem;align-items:center;">
+                <button id="btn-toggle-explanation" class="btn btn-secondary btn-sm" title="Toggle Explanation & Deep Dive">💡 Show Explanation</button>
+                <button id="btn-flag-question" class="btn-flag" title="Flag this question for later review">🚩 Flag for Review</button>
+              </div>
+            </div>
+
+            <!-- Question Text -->
+            <div id="mcq-question-text" class="mcq-question-text">
+              Loading question...
+            </div>
+
+            <!-- Options Container -->
+            <div id="mcq-options-container" class="mcq-options-grid">
+              <!-- Option buttons populated by JS -->
+            </div>
+
+            <!-- Multi-Select Action Bar -->
+            <div id="multiselect-action-bar" class="multiselect-actions hidden" style="margin-bottom:1.25rem;display:flex;align-items:center;gap:0.75rem;">
+              <button id="btn-submit-multiselect" class="btn btn-primary">✓ Check Selected Answers</button>
+              <span class="status-indicator">Select all that apply, then click to verify</span>
+            </div>
+
+            <!-- Post-Answer Teaching & Deep-Dive Panel -->
+            <div id="mcq-teaching-panel" class="teaching-panel hidden">
+              <div class="teaching-header">
+                <div id="teaching-verdict" class="teaching-verdict correct">
+                  <span class="verdict-icon">✓</span>
+                  <span class="verdict-title">Correct! Well done.</span>
+                </div>
+              </div>
+
+              <div class="teaching-body">
+                <!-- Explanation -->
+                <div class="teaching-section">
+                  <h4 class="section-title">💡 Explanation of the Concept</h4>
+                  <div id="teaching-explanation-text" class="explanation-text"></div>
+                </div>
+
+                <!-- Deeper Look / Study Pointers -->
+                <div class="deep-dive-box">
+                  <div class="deep-dive-header">
+                    <span class="deep-dive-icon">🔭</span>
+                    <h4>What to look for if you need a deeper look:</h4>
+                  </div>
+                  
+                  <div class="deep-dive-content">
+                    <div class="deep-dive-item">
+                      <strong>Core Concept:</strong>
+                      <span id="deep-dive-concept"></span>
+                    </div>
+                    <div class="deep-dive-item">
+                      <strong>What to look for:</strong>
+                      <p id="deep-dive-what-to-look"></p>
+                    </div>
+                    <div class="deep-dive-item">
+                      <strong>Recommended Google/Docs Search:</strong>
+                      <div class="search-snippet">
+                        <code id="deep-dive-search"></code>
+                        <button id="btn-copy-search" class="btn-copy" title="Copy Search Query">📋 Copy</button>
+                      </div>
+                    </div>
+                    <div class="deep-dive-item">
+                      <strong>Reference Material:</strong>
+                      <span id="deep-dive-reference" class="reference-link"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Question Footer / Controls -->
+            <div class="mcq-footer">
+              <button id="btn-prev-question" class="btn btn-secondary">← Previous</button>
+              <div class="footer-center">
+                <span id="question-answered-status" class="status-indicator">Select an option above to check your answer</span>
+              </div>
+              <button id="btn-next-question" class="btn btn-primary">Next Question →</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= TAB 3: LEETCODE TRACKER ================= -->
+      <section id="tab-leetcode" class="tab-pane">
+        <div class="leetcode-layout">
+          
+          <div class="section-header-actions">
+            <div>
+              <h2>LeetCode Coding Challenges Tracker</h2>
+              <p class="section-subtitle">Track problems you solve on LeetCode, note your pitfalls, and train Turing-critical patterns.</p>
+            </div>
+            <button id="btn-open-log-modal" class="btn btn-primary">➕ Log New LeetCode Problem</button>
+          </div>
+
+          <!-- Filters -->
+          <div class="lc-filter-bar">
+            <input type="text" id="lc-search-input" class="search-input" placeholder="Search by problem name or pattern...">
+            
+            <select id="lc-filter-difficulty" class="custom-select">
+              <option value="all">All Difficulties</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+
+            <select id="lc-filter-pattern" class="custom-select">
+              <option value="all">All Patterns</option>
+            </select>
+
+            <select id="lc-filter-status" class="custom-select">
+              <option value="all">All Statuses</option>
+              <option value="To Do">To Do (Target Practice)</option>
+              <option value="Solved Solo">Solved Solo</option>
+              <option value="Solved with Hint">Solved with Hint</option>
+              <option value="Needed Solution">Needed Solution</option>
+              <option value="Struggled">Struggled</option>
+              <option value="needs-revisit">Needs Revisit Only</option>
+            </select>
+          </div>
+
+          <!-- Problem List -->
+          <div id="leetcode-list" class="leetcode-grid">
+            <!-- Cards rendered via JS -->
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= TAB 4: KNOWLEDGE BASE NOTES ================= -->
+      <section id="tab-knowledge" class="tab-pane">
+        <div class="knowledge-layout">
+          
+          <div class="section-header-actions">
+            <div>
+              <h2>Knowledge Base Notes & Core Concepts</h2>
+              <p class="section-subtitle">Structured knowledge curated for Turing vetting. You can add new notes here or have Antigravity save them.</p>
+            </div>
+            <button id="btn-open-note-modal" class="btn btn-primary">➕ Add New Topic / Note</button>
+          </div>
+
+          <!-- Filter / Search -->
+          <div class="kb-filter-bar">
+            <input type="text" id="kb-search-input" class="search-input" placeholder="Search topics, concepts, keywords, pitfalls...">
+            <select id="kb-filter-category" class="custom-select">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+
+          <!-- Topics List -->
+          <div id="topics-list" class="topics-grid">
+            <!-- Cards rendered via JS -->
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ================= TAB 5: DATA & AI SYNC ================= -->
+      <section id="tab-sync" class="tab-pane">
+        <div class="sync-layout">
+          
+          <div class="card card-wide">
+            <div class="card-header">
+              <h3>🔄 Data Synchronization & AI Knowledge Base Connection</h3>
+            </div>
+            <div class="sync-status-box" id="sync-server-status">
+              <span class="status-dot online"></span>
+              <div>
+                <strong>Storage Engine:</strong>
+                <p id="sync-engine-desc">Active (LocalStorage + JSON Files Sync Ready)</p>
+              </div>
+            </div>
+
+            <div class="sync-instructions">
+              <h4>How to add new information with Antigravity (AI Assistant):</h4>
+              <ol class="styled-steps">
+                <li>Whenever you study a new topic or encounter Turing interview questions, <strong>tell Antigravity in the chat</strong> (e.g. <em>"Save this note about Redis replication"</em> or <em>"Add 3 MCQs about Python memory management"</em>).</li>
+                <li>Antigravity immediately updates the knowledge base files on disk.</li>
+                <li>Click <strong>"Reload from Disk Files"</strong> below to pull the latest additions right into the UI!</li>
+                <li>Alternatively, you can export your current progress and paste it to Antigravity so it can analyze your weak spots and generate customized drills.</li>
+              </ol>
+            </div>
+
+            <div class="sync-actions-grid">
+              <div class="sync-card">
+                <h4>📥 Pull from Local Files</h4>
+                <p>Reload questions, notes, and tracker from <code>knowledge_base/*.json</code> files.</p>
+                <button id="btn-reload-files" class="btn btn-secondary">Reload from Disk Files</button>
+              </div>
+
+              <div class="sync-card">
+                <h4>💾 Direct Save to Disk Files</h4>
+                <p>Save all current MCQs, LeetCode logs, and progress directly into <code>knowledge_base/</code>.</p>
+                <button id="btn-save-disk" class="btn btn-primary">Save to Disk (Via Server)</button>
+              </div>
+
+              <div class="sync-card">
+                <h4>📤 Export Full JSON State</h4>
+                <p>Download or copy the entire knowledge base & progress bundle as JSON.</p>
+                <button id="btn-export-json" class="btn btn-secondary">Copy Full JSON to Clipboard</button>
+                <button id="btn-download-json" class="btn btn-secondary">Download JSON File</button>
+              </div>
+
+              <div class="sync-card">
+                <h4>📥 Import JSON State</h4>
+                <p>Import a JSON bundle provided by Antigravity or from another backup.</p>
+                <button id="btn-open-import-modal" class="btn btn-secondary">Import JSON Bundle</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal: Log LeetCode Problem -->
+    <div id="modal-lc-log" class="modal-backdrop hidden">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3 id="lc-modal-title">Log LeetCode Challenge</h3>
+          <button class="modal-close" data-close-modal="modal-lc-log">&times;</button>
+        </div>
+        <form id="form-lc-log" class="modal-body">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="input-lc-number">Problem #:</label>
+              <input type="number" id="input-lc-number" class="form-input" placeholder="e.g. 15" required>
+            </div>
+            <div class="form-group flex-3">
+              <label for="input-lc-name">Problem Title:</label>
+              <input type="text" id="input-lc-name" class="form-input" placeholder="e.g. 3Sum" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="input-lc-diff">Difficulty:</label>
+              <select id="input-lc-diff" class="form-input">
+                <option value="Easy">Easy</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+            <div class="form-group flex-2">
+              <label for="input-lc-pattern">Pattern / Algorithm:</label>
+              <input type="text" id="input-lc-pattern" class="form-input" placeholder="e.g. Two Pointers, Sliding Window, DP" required>
+            </div>
+            <div class="form-group flex-1">
+              <label for="input-lc-status">Outcome:</label>
+              <select id="input-lc-status" class="form-input">
+                <option value="To Do">To Do (Target Practice)</option>
+                <option value="Solved Solo">Solved Solo</option>
+                <option value="Solved with Hint">Solved with Hint</option>
+                <option value="Needed Solution">Needed Solution</option>
+                <option value="Struggled">Struggled</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="input-lc-time">Time Complexity:</label>
+              <input type="text" id="input-lc-time" class="form-input" placeholder="e.g. O(N^2)" value="O(N)">
+            </div>
+            <div class="form-group flex-1">
+              <label for="input-lc-space">Space Complexity:</label>
+              <input type="text" id="input-lc-space" class="form-input" placeholder="e.g. O(1)" value="O(1)">
+            </div>
+            <div class="form-group flex-2">
+              <label for="input-lc-url">LeetCode URL (optional):</label>
+              <input type="url" id="input-lc-url" class="form-input" placeholder="https://leetcode.com/problems/...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-lc-pitfalls">Mistakes & What Tripped You Up:</label>
+            <textarea id="input-lc-pitfalls" class="form-input" rows="2" placeholder="e.g. Forgot to skip duplicate values when advancing pointers, causing duplicates in result."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="input-lc-takeaway">Key Takeaway / Pattern Rule-of-Thumb:</label>
+            <textarea id="input-lc-takeaway" class="form-input" rows="2" placeholder="e.g. Sort first, fix one element with an outer loop, then use standard Two Pointers."></textarea>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="toggle-checkbox">
+              <input type="checkbox" id="input-lc-revisit">
+              <span class="toggle-slider"></span>
+              <span class="toggle-text">Flag this problem for Revisit / Review</span>
+            </label>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close-modal="modal-lc-log">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save to Tracker</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Add Topic / Note -->
+    <div id="modal-kb-note" class="modal-backdrop hidden">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Add Knowledge Base Topic</h3>
+          <button class="modal-close" data-close-modal="modal-kb-note">&times;</button>
+        </div>
+        <form id="form-kb-note" class="modal-body">
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label for="input-kb-title">Topic Title:</label>
+              <input type="text" id="input-kb-title" class="form-input" placeholder="e.g. Redis Eviction Policies & Invalidation" required>
+            </div>
+            <div class="form-group flex-1">
+              <label for="input-kb-category">Category:</label>
+              <input type="text" id="input-kb-category" class="form-input" placeholder="e.g. System Design, Databases" required>
+            </div>
+            <div class="form-group flex-1">
+              <label for="input-kb-importance">Importance:</label>
+              <select id="input-kb-importance" class="form-input">
+                <option value="High">High (Core Turing)</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-kb-summary">High-Level Summary:</label>
+            <textarea id="input-kb-summary" class="form-input" rows="2" placeholder="Quick overview of the topic..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="input-kb-concepts">Key Concepts (One per line):</label>
+            <textarea id="input-kb-concepts" class="form-input" rows="3" placeholder="LRU vs LFU&#10;Volatile vs Allkeys policies&#10;Memory footprint optimization"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="input-kb-pitfalls">Common Pitfalls (One per line):</label>
+            <textarea id="input-kb-pitfalls" class="form-input" rows="2" placeholder="Assuming TTL guarantees immediate deletion&#10;Overloading Redis with large key scans"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="input-kb-keywords">Deep Dive Keywords & Search Queries (Comma separated):</label>
+            <input type="text" id="input-kb-keywords" class="form-input" placeholder="e.g. Redis maxmemory-policy volatile-lru, Redis keys vs scan command">
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close-modal="modal-kb-note">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Topic</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Import JSON -->
+    <div id="modal-import-json" class="modal-backdrop hidden">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Import Knowledge & Question Bundle</h3>
+          <button class="modal-close" data-close-modal="modal-import-json">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-tip">Paste JSON generated by Antigravity or a backup file below:</p>
+          <textarea id="input-import-text" class="form-input" rows="8" placeholder='{"topics": [...], "mcqs": [...], "leetcode": [...]}'></textarea>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close-modal="modal-import-json">Cancel</button>
+            <button id="btn-submit-import" class="btn btn-primary">Import & Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">Action completed</div>
+
+    <!-- Celebration Confetti Canvas -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+    <!-- Mobile Bottom Navigation Dock (Visible on Screens <= 768px) -->
+    <nav class="mobile-bottom-nav">
+      <button class="mobile-nav-item active" data-tab="dashboard">
+        <span class="mobile-nav-icon">📊</span>
+        <span class="mobile-nav-label">Dashboard</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="mcq">
+        <span class="mobile-nav-icon">❓</span>
+        <span class="mobile-nav-label">MCQs</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="leetcode">
+        <span class="mobile-nav-icon">💻</span>
+        <span class="mobile-nav-label">LeetCode</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="knowledge">
+        <span class="mobile-nav-icon">📚</span>
+        <span class="mobile-nav-label">Notes</span>
+      </button>
+      <button class="mobile-nav-item" data-tab="sync">
+        <span class="mobile-nav-icon">⚙️</span>
+        <span class="mobile-nav-label">Sync</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+{
+  "name": "Turing Prep Hub — Java & Spring Boot",
+  "short_name": "TuringPrep",
+  "description": "Adaptive MCQ engine, LeetCode tracker, and vetted Turing.com knowledge base for Java & Spring Boot engineers.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#38bdf8",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
